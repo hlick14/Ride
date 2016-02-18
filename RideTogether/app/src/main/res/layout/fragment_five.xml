@@ -1,0 +1,109 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:id="@+id/five"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+
+    tools:context="donate.cinek.wit.ie.ridetogether.FirstScreen">
+    <!--android:background="@drawable/welcomescreen"-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:orientation="vertical">
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tripNameWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/usernameWrapper"
+            android:layout_marginTop="4dp"
+            android:theme="@style/myTextLabel">
+
+            <EditText
+                android:id="@+id/tripName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                />
+        </android.support.design.widget.TextInputLayout>
+        <TextView
+            android:id="@+id/tempTextView2"
+            android:gravity="center"
+            android:text="Time of your trip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+
+            />
+        <TextView
+            android:id="@+id/tempTextView"
+            android:gravity="center"
+            android:text="Date of your trip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@id/tempTextView2"
+
+
+            />
+
+
+
+    </LinearLayout>
+
+
+
+
+
+
+
+        <com.rey.material.widget.Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Date"
+            android:id="@+id/buttonSelectDate"
+            android:background="@color/postive_btn"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="64dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true" />
+
+
+        <com.rey.material.widget.Button
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Time"
+            android:id="@+id/buttonSelectTime"
+            android:layout_marginBottom="130sp"
+            android:background="@color/postive_btn"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/buttonSelectDate"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="false" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:theme="@style/Material"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        app:borderWidth="0dp"
+        app:elevation="2dp"
+
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin2"
+        android:src="@drawable/ic_add_white_24dp" />
+
+
+
+
+</RelativeLayout>

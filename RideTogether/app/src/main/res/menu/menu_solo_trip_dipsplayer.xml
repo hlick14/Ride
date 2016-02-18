@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="donate.cinek.wit.ie.ridetogether.SoloTripDipsplayer">
+    <item android:id="@+id/optionsO" android:title="@string/optionsO"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/optionsLogout" android:title="@string/optionsLogOut"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+</menu>

@@ -1,0 +1,57 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+android:layout_height="match_parent"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+android:paddingBottom="@dimen/activity_vertical_margin"
+
+tools:context="donate.cinek.wit.ie.ridetogether.FirstScreen">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+
+            android:src="@drawable/largelogo"
+
+            android:id="@+id/WelcomeText"
+            />
+
+    </RelativeLayout>
+    <com.rey.material.widget.Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/first_screen_login"
+        android:id="@+id/fLogin"
+        android:background="@color/postive_btn"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="64dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        />
+
+
+    <com.rey.material.widget.Button
+
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/first_screen_register"
+    android:id="@+id/fRegister"
+    android:background="@color/postive_btn"
+    android:layout_alignParentBottom="true"
+    android:layout_alignStart="@+id/fLogin"
+    android:layout_alignParentEnd="true" />
+
+
+
+</RelativeLayout>

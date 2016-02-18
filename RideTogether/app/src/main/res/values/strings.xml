@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RideTogether</string>
+    <string name="LogIn_Activity">Log In</string>
+    <string name="title_drawer_layout">Whatever</string>
+    <string name="LogIn">Log In</string>
+    <string name="Register">Register</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="Name">Name</string>
+    <string name="message_elipses">Message...</string>
+    <string name="Email">Email Address</string>
+    <string name="Username">Username</string>
+    <string name="Password">Password</string>
+    <string name="SettingPassword">Type in your new password</string>
+    <string name="MotorbikeName">Motorbike Model</string>
+    <string name="EngineSize">Engine Size</string>
+    <string name="welcome_screen_text">Welcome to Ride Together</string>
+    <string name="first_screen_register">Register</string>
+    <string name="first_screen_login">Login</string>
+    <string name="map">Some text for now</string>
+    <string name="new_trip_title">Plan Your Trip</string>
+    <string name="StartCity">Start City</string>
+    <string name="DestinationCity">Destination City</string>
+    <string name="CreateTrip">Create Trip</string>
+    <string name="TripDate">Trip Date</string>
+    <string name="TripTime">Trip Time</string>
+    <string name="soloText">Your Trips</string>
+    <string name="groupText">All Trips</string>
+    <string name="optionTitle">What would you like to do next?</string>
+    <string name="title_activity_options">Options</string>
+    <string name="title_activity_solo_trip_dipsplayer">SoloTripDipsplayer</string>
+    <string name="title_activity_all_trip_dipsplayer">AllTripDisplayer</string>
+    <string name="TripName">Name your Trip</string>
+    <string name="title_activity_account_options">AccountOptions</string>
+    <string name="changePassword">Change Password</string>
+    <string name="deleteAccountText">Delete the Account ?</string>
+    <string name="deleteAccountButton">Delete Your Account</string>
+    <string name="optionsLogOut">Log out</string>
+    <string name="optionsO">Back to options</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Action_Chat">Chat</string>
+    <string name="hello_world2">Start: Please select start point</string>
+    <string name="hello_world1">End: Please select end point</string>
+    <string name="str_tv_distance_time">Distance</string>
+    <string name="model">Choose a motorbike make</string>
+    <string name="one">First</string>
+    <string name="Date">Select Date</string>
+    <string name="Time">Select Time</string>
+    <string name="two">First</string>
+    <string name="three">First</string>
+    <string name="four">First</string>
+    <string name="change_city">Change city</string>
+
+    <!-- Put your own APP ID here -->
+    <string name="open_weather_maps_app_id">233f178e6f7a470464fae8a537c349da</string>
+
+    <string name="weather_sunny">&#xf00d;</string>
+    <string name="weather_clear_night">&#xf02e;</string>
+
+    <string name="weather_foggy">&#xf014;</string>
+    <string name="weather_cloudy">&#xf013;</string>
+    <string name="weather_rainy">&#xf019;</string>
+    <string name="weather_snowy">&#xf01b;</string>
+    <string name="weather_thunder">&#xf01e;</string>
+    <string name="weather_drizzle">&#xf01c;</string>
+
+    <string name="place_not_found">Sorry, no weather data found.</string>
+    <string name="promptMake">Choose a motorbike Manufacturer</string>
+    <string-array name="country_arrays">
+        <item>Honda</item>
+        <item>Yamaha</item>
+        <item>Suzuki</item>
+        <item>Aprilia</item>
+        <item>Ducati</item>
+        <item>Harley Davidson</item>
+        <item>Ktm</item>
+        <item>Triumph</item>
+
+    </string-array>
+    <string-array name="engine">
+
+        <item>125</item>
+        <item>250</item>
+
+        <item>500</item>
+        <item>600 </item>
+
+
+        <item>1000</item>
+
+        <item>1400</item>
+        <item>1600</item>
+
+    </string-array>
+
+
+    <string name="title_activity_maps">Map</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_window">window</string>
+    <string name="title_activity_list_users">ListUsersActivity</string>
+    <string name="title_activity_messaging">MessagingActivity</string>
+    <string name="title_activity_add_friend">addFriend</string>
+
+
+</resources>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+
+    android:orientation="vertical"
+    >
+
+
+
+    <ImageView
+        android:id="@+id/drawer_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+
+        android:layout_centerVertical="true" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="23dp"/>
+
+
+    <TextView
+        android:id="@+id/drawerUsername"
+        android:layout_width="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/drawer_icon"
+        android:text="no text"
+        android:textColor="#fff"
+
+        android:paddingRight="40dp"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="23dp"/>
+
+    <TextView
+        android:id="@+id/drawerName"
+        android:layout_width="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/drawerUsername"
+        android:text="no text"
+        android:textColor="#fff"
+
+        />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="23dp"/>
+
+    <TextView
+        android:id="@+id/drawerMotorbike"
+        android:layout_width="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/drawerName"
+        android:text="no text"
+        android:textColor="#fff"
+
+        />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="23dp"/>
+
+    <TextView
+        android:id="@+id/drawer_userSince"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_below="@+id/drawerMotorbike"
+        android:text="no text"
+        android:textColor="#fff"/>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="23dp"/>
+
+
+
+</LinearLayout>

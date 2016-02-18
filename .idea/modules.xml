@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/21.0.3.iml" filepath="$PROJECT_DIR$/RideTogether/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/21.0.3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/21.0.3.iml" filepath="$PROJECT_DIR$/RideTogether/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/21.0.3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.1.71/6.1.71.iml" filepath="$PROJECT_DIR$/RideTogether/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.1.71/6.1.71.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/src/androidTest/androidTest.iml" filepath="$PROJECT_DIR$/RideTogether/app/src/androidTest/androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/build/generated/source/buildConfig/androidTest/androidTest1.iml" filepath="$PROJECT_DIR$/RideTogether/app/build/generated/source/buildConfig/androidTest/androidTest1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/build/generated/source/buildConfig/buildConfig.iml" filepath="$PROJECT_DIR$/RideTogether/app/build/generated/source/buildConfig/buildConfig.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/build/intermediates/manifest/androidTest/debug/debug.iml" filepath="$PROJECT_DIR$/RideTogether/app/build/intermediates/manifest/androidTest/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/build/intermediates/manifests/full/debug/debug.iml" filepath="$PROJECT_DIR$/RideTogether/app/build/intermediates/manifests/full/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/src/main/main.iml" filepath="$PROJECT_DIR$/RideTogether/app/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RideTogether/app/build/generated/source/r/r.iml" filepath="$PROJECT_DIR$/RideTogether/app/build/generated/source/r/r.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:padding="16sp">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        card_view:cardBackgroundColor="@android:color/transparent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cv">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+            <ImageView
+                android:layout_width="100sp"
+                android:layout_height="100sp"
+                android:id="@+id/mapImage"
+                android:src="@drawable/ic_launcher" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Trip Title"
+                android:id="@+id/txtTitle"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/mapImage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Starting City"
+                android:id="@+id/txtStartCity"
+                android:layout_alignBottom="@+id/mapImage"
+                android:layout_toEndOf="@+id/mapImage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="End City"
+                android:id="@+id/txtEndCity"
+                android:layout_alignBottom="@+id/mapImage"
+                android:layout_toRightOf="@+id/txtStartCity" />
+
+
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

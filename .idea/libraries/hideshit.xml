@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="hideshit">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/libs/hideshit/bolts-android-1.1.4-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/libs/hideshit/ParseCrashReporting-1.8.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/libs/hideshit/bolts-android-1.1.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

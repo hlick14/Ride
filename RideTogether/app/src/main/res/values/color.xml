@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <color name="colorPrimary">#c4221f</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#c4221f</color>
+    <color name="postive_btn">#c4221f</color>
+    <color name="text">#ffffff</color>
+    <color name="profileImage">#ffffff</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+    <style name="TextLabel" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#c4221f</item>
+    </style>
+</resources>

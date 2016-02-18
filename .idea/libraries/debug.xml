@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="debug">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/build/intermediates/pre-dexed/debug/classes-9f14bb6bc66a62949e41dab40347b543c3b135e8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-b46b3d066275538f667ec25bb5d0ce2372f00d18.jar!/" />
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/build/intermediates/pre-dexed/debug/classes-21a6961f145db46383a8d68e84181beb16f80cf8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-99c1ccd53a7fa88549c32ac544faa9e96cd17557.jar!/" />
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/build/intermediates/pre-dexed/debug/Parse-1.8.2-b34e57438a18d28f1ce349ea727b65f615a7c274.jar!/" />
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/build/intermediates/pre-dexed/debug/bolts-android-1.2.0-bdc73634af779db6586f4cdecf8744658deba17f.jar!/" />
+      <root url="jar://$PROJECT_DIR$/RideTogether/app/build/intermediates/pre-dexed/debug/classes-f1817f0bde1ff27afe1699706148fe0b29af4ba6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

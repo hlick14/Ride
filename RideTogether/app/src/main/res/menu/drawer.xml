@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<group android:checkableBehavior="single">-->
+        <!--<item-->
+            <!--android:id="@+id/navigation_item_attachment"-->
+            <!--android:checked="true"-->
+            <!--android:icon="@drawable/ic_attachment"-->
+            <!--android:title="attachements" />-->
+        <!--<item-->
+            <!--android:id="@+id/navigation_item_images"-->
+            <!--android:icon="@drawable/ic_image"-->
+            <!--android:title="images" />-->
+        <!--<item-->
+            <!--android:id="@+id/navigation_item_location"-->
+            <!--android:icon="@drawable/ic_place"-->
+            <!--android:title="Location" />-->
+    <!--</group>-->
+
+    <!--<item android:title="Sub Menu">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:icon="@drawable/settings"-->
+                <!--android:title="Settings" />-->
+            <!--<item-->
+                <!--android:icon="@drawable/sing_out"-->
+                <!--android:title="Log Out" />-->
+        <!--</menu>-->
+    <!--</item>-->
+
+</menu>
