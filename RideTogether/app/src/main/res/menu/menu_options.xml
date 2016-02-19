@@ -2,13 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
     <item
         android:id="@+id/chat"
-        android:icon="@drawable/ic_chat_white_36dp"
+        android:icon="@drawable/ic_chat_white_24dp"
         android:title="@string/Action_Chat"
         app:showAsAction="always" />
     <item
         android:id="@+id/change_city"
         android:orderInCategory="1"
-        android:icon="@drawable/ic_play_dark"
+        android:icon="@drawable/ic_person_add_white_24dp"
         android:title="@string/change_city"
+        android:actionLayout="@layout/action_bar_notifitcation_icon"
         app:showAsAction="always"/>
 </menu>  

@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,6 +81,8 @@ public class Options extends BaseActivity {
     Bitmap bitmap;
     String uSince;
     String Model, Engine;
+    private int hot_number = 0;
+    private TextView ui_hot = null;
 
     ProgressDialog dialog;
     private List<Bitmap> imgList = new ArrayList<Bitmap>();
@@ -103,6 +106,7 @@ public class Options extends BaseActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -175,6 +179,15 @@ private void setupTabIcons() {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_options, menu);
+        final View menu_hotlist = menu.findItem(R.id.menu_hotlist).getActionView();
+        ui_hot = (TextView) menu_hotlist.findViewById(R.id.hotlist_hot);
+        updateHotCount(hot_number);
+        new MyMenuItemStuffListener(menu_hotlist, "Show hot message") {
+            @Override
+            public void onClick(View v) {
+                onHotlistSelected();
+            }
+        };
 
         return super.onCreateOptionsMenu(menu);
 
@@ -380,6 +393,23 @@ private void setupTabIcons() {
 
 
     }
+
+    public void updateHotCount(final int new_hot_number) {
+        hot_number = new_hot_number;
+        if (ui_hot == null) return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (new_hot_number == 0)
+                    ui_hot.setVisibility(View.INVISIBLE);
+                else {
+                    ui_hot.setVisibility(View.VISIBLE);
+                    ui_hot.setText(Integer.toString(new_hot_number));
+                }
+            }
+        });
+    }
+
 }
 
 

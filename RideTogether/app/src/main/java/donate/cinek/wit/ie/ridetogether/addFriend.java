@@ -27,11 +27,12 @@ public class addFriend extends AppCompatActivity {
     private ArrayAdapter<String> namesArrayAdapter;
     private ListView usersListView;
     ProgressDialog progressDialog;
-    TextView time,date;
+    TextView time, date,FoundRequestedUsers;
     TextInputLayout update;
     private ArrayList<String> listOfUsernames;
     String name;
     Button friendRequest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,17 +43,20 @@ public class addFriend extends AppCompatActivity {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
         getWindow().setLayout((int) (width * .8), (int) (height * .6));
-         update = (TextInputLayout) findViewById(R.id.SearchUser);
-
+        update = (TextInputLayout) findViewById(R.id.SearchUser);
+        update.setHint("Username");
 
 
         friendSearch = (Button) this.findViewById(R.id.friendSearch);
+
+
         getListOfUsers();
 
 
         friendSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
 
                 name = update.getEditText().getText().toString();
                 if (name.isEmpty()) {
@@ -68,39 +72,50 @@ public class addFriend extends AppCompatActivity {
 
                             namesArrayAdapter =
                                     new ArrayAdapter<String>(getApplicationContext(),
-                                            R.layout.user_list_item,listOfUsernames);
+                                            R.layout.user_list_item, listOfUsernames);
                             usersListView.setAdapter(namesArrayAdapter);
-
-
-
-
-
-//                    imagesArrayAdapter = new ArrayAdapter<Bitmap>(getApplicationContext(),R.layout.user_list_item,images);
-//                    usersListView.setAdapter(imagesArrayAdapter);
-
+                        }
+                        else
+                        {
+                            Toast.makeText(addFriend.this,"Wrong Username entered",Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
 
                             usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
-                                public void onItemClick(AdapterView<?> a, View v, int i, long l) {
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
                                     final String currentUser = ParseUser.getCurrentUser().getUsername();
                                     ParseQuery<ParseObject> query = ParseQuery.getQuery("FriendRequest");
                                     query.whereEqualTo("CurrentUser", currentUser);
                                     query.whereEqualTo("RequestedUser", listOfUsernames.get(0));
 
+
                                     query.findInBackground(new FindCallback<ParseObject>() {
                                         public void done(List<ParseObject> users, ParseException e) {
-                                            if (users == null) {
+                                            if (users.isEmpty()) {
+
                                                 ParseObject requestedFriend = new ParseObject("FriendRequest");
                                                 requestedFriend.put("CurrentUser", currentUser);
-                                                requestedFriend.put("RequestedUser", listOfUsernames.get(0));//Set to one as all usernames are unique therefore the list will only contain one entry
+                                                String tempRequestUsername = listOfUsernames.get(0);
+                                                requestedFriend.put("RequestedUser",tempRequestUsername);//Set to one as all usernames are unique therefore the list will only contain one entry
 
-                                                requestedFriend.saveInBackground();
+//                                                requestedFriend.saveInBackground();
+                                                try {
+                                                    requestedFriend.save();
+                                                } catch (ParseException e1) {
+                                                    e1.printStackTrace();
+                                                }
+
+                                                Toast.makeText(addFriend.this, "Friend Request has been sent ", Toast.LENGTH_SHORT).show();
+                                                addFriend.this.finish();
 
 
                                             } else {
-                                                Toast.makeText(addFriend.this, "You have already requested friendship with this contact ", Toast.LENGTH_SHORT).show();
-
+                                                Toast.makeText(addFriend.this, "You have already sent a friend request to this user ", Toast.LENGTH_SHORT).show();
+                                                addFriend.this.finish();
                                             }
                                             if (e != null) {
                                                 Toast.makeText(addFriend.this, "There was an error fetching the list of users", Toast.LENGTH_SHORT).show();
@@ -109,19 +124,17 @@ public class addFriend extends AppCompatActivity {
                                         }
                                     });
 
-
-
-
                                 }
                             });
+
+
                         }
 
+
                     }
-                }
-            }
+
 
         });
-
 
 
     }
@@ -145,19 +158,17 @@ public class addFriend extends AppCompatActivity {
 
                         listOfUsernames.add(objects.get(i).get("username").toString());
                     }
-                  if( progressDialog.isShowing())
-                  {
-                      progressDialog.dismiss();
-                  }
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                 } else {
-                    Toast.makeText(addFriend.this,"Could not load the list of users",Toast.LENGTH_SHORT).show();
-                    if( progressDialog.isShowing())
-                    {
+                    Toast.makeText(addFriend.this, "Could not load the list of users", Toast.LENGTH_SHORT).show();
+                    if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
                 }
             }
         });
     }
-    }
+}
 

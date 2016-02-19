@@ -99,8 +99,12 @@ public class OneFragment extends android.support.v4.app.Fragment {
         tripQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(final List<ParseObject> parseObjects, ParseException e) {
-                if (parseObjects.size() == 0) {
-
+                if(parseObjects.isEmpty())
+                {
+                    if(dialog.isShowing())
+                    {
+                        dialog.dismiss();
+                    }
                 }
                 if (e == null) {
                     for (int i = 0; i < parseObjects.size(); i++) {
@@ -119,11 +123,15 @@ public class OneFragment extends android.support.v4.app.Fragment {
 
                                         getTrips();
                                     } else {
+                                        if(dialog.isShowing())
+                                        {
+                                            dialog.dismiss();
+                                        }
 
                                     }
                                 } else {
                                     // something went wrong
-                                    Toast.makeText(getActivity(), "Error Loading User's profile Image", Toast.LENGTH_SHORT);
+                                    Toast.makeText(getActivity(), "Error Loading Trip's images", Toast.LENGTH_SHORT).show();
 
                                 }
                             }
@@ -134,7 +142,8 @@ public class OneFragment extends android.support.v4.app.Fragment {
 
 
                 } else {
-                    Toast.makeText(getActivity(), "Error Loading User's profile ", Toast.LENGTH_SHORT);
+                    //if there was a parse error
+                    Toast.makeText(getActivity(), "There was not data about this profile on our servers ", Toast.LENGTH_SHORT).show();
 
 
                 }
@@ -151,7 +160,7 @@ public class OneFragment extends android.support.v4.app.Fragment {
             public void done(List<ParseObject> StartingCity, ParseException e) {
 
                 if (e == null) {
-                    if (StartingCity.size() == 0) {
+                    if (StartingCity.isEmpty()) {
                         if (dialog.isShowing())
                             dialog.dismiss();
 
@@ -185,21 +194,20 @@ public class OneFragment extends android.support.v4.app.Fragment {
 
                     Bitmap icon = BitmapFactory.decodeResource(getActivity().getResources(),
                             R.drawable.notrip);
+                    Toast.makeText(getActivity(), "This is getting exectured or not ?", Toast.LENGTH_SHORT).show();
                     hujumuniu.add(new SoloTrip("0", icon, "No available Trips", "Unavailable", "Unavailable", "Unavailable", "Unavailable"));
                     if (dialog.isShowing())
                         dialog.dismiss();
                 }
-                if (dialog.isShowing())
-                    dialog.dismiss();
 
 
             }
 
 
-
         });
-
-
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
     }
 
     public void setTripAdapter()
