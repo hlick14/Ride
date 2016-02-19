@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -71,31 +72,24 @@ public class LoginIn extends AppCompatActivity {
 //                                startService(serviceIntent);
 
                             } else {
+                                usernameWrapper.setErrorEnabled(true);
+//                                usernameWrapper.setError("Invalid Username or Password");
+                                usernameWrapper.setError(Html.fromHtml("<font color='#ffffff'>Invalid Username or Password</font>"));
 
 
                             }
 
                         }
                     });
-                    if (susername.equals("")) {
-                        usernameWrapper.setErrorEnabled(true);
-                        usernameWrapper.setError("Not a valid Username!");
+
 
 //                                    Toast.makeText(LoginIn.this, "Log in Failed, Please Try again", Toast.LENGTH_SHORT).show();
-
-                    } else if (spassword == "") {
-
-                        passwordWrapper.setError("Please enter a  password");
-                        ////// For security purposes , if invalid password verification is no displayed
-//                                } else {
-//
-//                                    Toast.makeText(LoginIn.this, "Log in Failed, Please Try again", Toast.LENGTH_SHORT).show();
-//                                }
+                        if(spassword.isEmpty())
+                        {
+                            passwordWrapper.setError(Html.fromHtml("<font color='#ffffff'>Please enter the password</font>"));
+                        }
                     }
 
-
-
-            }
         });
 
     }

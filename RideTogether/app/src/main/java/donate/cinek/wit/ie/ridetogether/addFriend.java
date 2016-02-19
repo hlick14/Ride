@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -30,6 +31,7 @@ public class addFriend extends AppCompatActivity {
     TextInputLayout update;
     private ArrayList<String> listOfUsernames;
     String name;
+    Button friendRequest;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +43,7 @@ public class addFriend extends AppCompatActivity {
         int height = dm.heightPixels;
         getWindow().setLayout((int) (width * .8), (int) (height * .6));
          update = (TextInputLayout) findViewById(R.id.SearchUser);
+
 
 
         friendSearch = (Button) this.findViewById(R.id.friendSearch);
@@ -58,28 +61,56 @@ public class addFriend extends AppCompatActivity {
                 } else {
                     for (int i = 0; i < listOfUsernames.size(); i++) {
                         String tempUsernName = listOfUsernames.get(i);
+
                         if (tempUsernName.equals(name)) {
                             usersListView = (ListView) findViewById(R.id.foundUsers);
+
+
                             namesArrayAdapter =
                                     new ArrayAdapter<String>(getApplicationContext(),
                                             R.layout.user_list_item,listOfUsernames);
                             usersListView.setAdapter(namesArrayAdapter);
+
+
+
+
+
 //                    imagesArrayAdapter = new ArrayAdapter<Bitmap>(getApplicationContext(),R.layout.user_list_item,images);
 //                    usersListView.setAdapter(imagesArrayAdapter);
-                            Button sendRequest= new Button(addFriend.this);
-                            sendRequest.setText("Send Friend Request");
-                            usersListView.addView(sendRequest);
-                            sendRequest.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
 
-                                    Toast.makeText(addFriend.this,"button on click works",Toast.LENGTH_SHORT).show();
-                                }
-                            });
+
 
                             usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> a, View v, int i, long l) {
+                                    final String currentUser = ParseUser.getCurrentUser().getUsername();
+                                    ParseQuery<ParseObject> query = ParseQuery.getQuery("FriendRequest");
+                                    query.whereEqualTo("CurrentUser", currentUser);
+                                    query.whereEqualTo("RequestedUser", listOfUsernames.get(0));
+
+                                    query.findInBackground(new FindCallback<ParseObject>() {
+                                        public void done(List<ParseObject> users, ParseException e) {
+                                            if (users == null) {
+                                                ParseObject requestedFriend = new ParseObject("FriendRequest");
+                                                requestedFriend.put("CurrentUser", currentUser);
+                                                requestedFriend.put("RequestedUser", listOfUsernames.get(0));//Set to one as all usernames are unique therefore the list will only contain one entry
+
+                                                requestedFriend.saveInBackground();
+
+
+                                            } else {
+                                                Toast.makeText(addFriend.this, "You have already requested friendship with this contact ", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                            if (e != null) {
+                                                Toast.makeText(addFriend.this, "There was an error fetching the list of users", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        }
+                                    });
+
+
+
 
                                 }
                             });

@@ -52,6 +52,7 @@
     <string name="three">First</string>
     <string name="four">First</string>
     <string name="change_city">Change city</string>
+    <color name="error">#ffffff</color>
 
     <!-- Put your own APP ID here -->
     <string name="open_weather_maps_app_id">233f178e6f7a470464fae8a537c349da</string>
