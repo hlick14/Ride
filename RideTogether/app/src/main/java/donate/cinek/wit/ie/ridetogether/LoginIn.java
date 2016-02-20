@@ -1,5 +1,6 @@
 package donate.cinek.wit.ie.ridetogether;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,17 +12,25 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 
 public class LoginIn extends AppCompatActivity {
 
-
+    public int numOfReuests=0;
     protected EditText username;
     protected EditText password;
     protected Button button;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +62,11 @@ public class LoginIn extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                dialog = new ProgressDialog(LoginIn.this, 1);
+                dialog.setMessage("Logging You In");
+                dialog.setCancelable(false);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.show();
 
 
 
@@ -64,17 +78,47 @@ public class LoginIn extends AppCompatActivity {
                         public void done(ParseUser user, com.parse.ParseException e) {
                             if (user != null) {
                                     //temporarly disabled to check sinch messaging
-                                Intent home = new Intent(LoginIn.this, Options.class);
-                                startActivity(home);
+
+
+                                    final String currentUser = ParseUser.getCurrentUser().getUsername();
+                                    ParseQuery<ParseObject> query = ParseQuery.getQuery("FriendRequest");
+                                    query.whereEqualTo("RequestedUser", currentUser);
+                                    query.findInBackground(new FindCallback<ParseObject>() {
+                                        public void done(List<ParseObject> users, ParseException e) {
+                                            if (e == null) {
+                                                numOfReuests = users.size();
+                                                Intent home = new Intent(LoginIn.this, Options.class);
+                                                home.putExtra("requests",numOfReuests);
+                                                if(dialog.isShowing()) {
+                                                    dialog.dismiss();
+                                                }
+                                                startActivity(home);
 //                                final Intent intent = new Intent(getApplicationContext(), ListUsersActivity.class);
-                                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+                                                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
 //                                startActivity(intent);
 //                                startService(serviceIntent);
+                                            } else {
+                                                numOfReuests = 0;
+                                                Toast.makeText(LoginIn.this, "There was an error retrieving your friend requests from our servers", Toast.LENGTH_SHORT).show();
+                                            }
+
+
+                                        }
+                                    });
+
+
+
+
+
+
 
                             } else {
                                 usernameWrapper.setErrorEnabled(true);
 //                                usernameWrapper.setError("Invalid Username or Password");
                                 usernameWrapper.setError(Html.fromHtml("<font color='#ffffff'>Invalid Username or Password</font>"));
+                                if(dialog.isShowing()) {
+                                    dialog.dismiss();
+                                }
 
 
                             }
@@ -87,6 +131,9 @@ public class LoginIn extends AppCompatActivity {
                         if(spassword.isEmpty())
                         {
                             passwordWrapper.setError(Html.fromHtml("<font color='#ffffff'>Please enter the password</font>"));
+                            if(dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
                         }
                     }
 

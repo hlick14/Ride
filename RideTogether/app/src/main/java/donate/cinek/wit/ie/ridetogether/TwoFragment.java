@@ -75,7 +75,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
             } catch (Exception ex) {
             }
 
-            if (!gps_enabled && !network_enabled) {
+            if (!gps_enabled ) {
                showAlert();
 
             }

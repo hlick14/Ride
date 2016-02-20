@@ -1,21 +1,22 @@
 package donate.cinek.wit.ie.ridetogether;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.internal.view.menu.MenuView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,26 +42,9 @@ import java.util.List;
 
 
 public class Options extends BaseActivity {
-    protected ImageButton plan;
-    protected ImageButton showUserTrips;
-    protected ImageButton showAllTrips;
+
     protected ImageButton account;
-    //message text view
-    private TextView messageView;
-    //message array
-    private String[] messages;
-    //total messages
-    private int numMessages = 4;
-    //current message -start at zero
-    private int currMessage = 0;
-    private GestureDetectorCompat gDetect;
-
-    private MenuView.ItemView it;
-
     private DrawerLayout mDrawerLayout;
-
-
-
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private TextView tv;
@@ -71,8 +55,6 @@ public class Options extends BaseActivity {
             R.drawable.home
 
     };
-
-
     String name;
     String username;
     String Motorbike;
@@ -83,7 +65,6 @@ public class Options extends BaseActivity {
     String Model, Engine;
     private int hot_number = 0;
     private TextView ui_hot = null;
-
     ProgressDialog dialog;
     private List<Bitmap> imgList = new ArrayList<Bitmap>();
     public List<SoloTrip> hujumuniu = new ArrayList<>();
@@ -91,11 +72,18 @@ public class Options extends BaseActivity {
     String tName, tDate, tTime;
     int t = 0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options2);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        Bundle extras = getIntent().getExtras();
+        if(!extras.isEmpty()) {
+            hot_number = extras.getInt("requests");
+        }
+
+
 
         getUserData();
 
@@ -138,18 +126,8 @@ public class Options extends BaseActivity {
                 return true;
             }
         });
-        //Used for updating the city by text , city update gonna be gathered straight from users location
-
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.container, new TwoFragment())
-//                    .commit();
-//        }
-//        getListOfUsers();
 
     }
-
-
 
 
 
@@ -179,13 +157,19 @@ private void setupTabIcons() {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_options, menu);
-        final View menu_hotlist = menu.findItem(R.id.menu_hotlist).getActionView();
-        ui_hot = (TextView) menu_hotlist.findViewById(R.id.hotlist_hot);
+
+        final View menu_hotlist = menu.findItem(R.id.change_city).getActionView();
+        ui_hot = (TextView) menu_hotlist.findViewById(R.id.notificationTextView);
+//        hot_number = numOfReuests;
         updateHotCount(hot_number);
         new MyMenuItemStuffListener(menu_hotlist, "Show hot message") {
             @Override
             public void onClick(View v) {
-                onHotlistSelected();
+                final Intent addFriendIntent = new Intent(getApplicationContext(), addFriend.class);
+
+                startActivity(addFriendIntent);
+                Toast.makeText(Options.this, "Its Working", Toast.LENGTH_SHORT).show();
+
             }
         };
 
@@ -409,6 +393,41 @@ private void setupTabIcons() {
             }
         });
     }
+    static abstract class MyMenuItemStuffListener implements View.OnClickListener, View.OnLongClickListener {
+        private String hint;
+        private View view;
+
+        MyMenuItemStuffListener(View view, String hint) {
+            this.view = view;
+            this.hint = hint;
+            view.setOnClickListener(this);
+            view.setOnLongClickListener(this);
+        }
+
+        @Override abstract public void onClick(View v);
+
+        @Override public boolean onLongClick(View v) {
+            final int[] screenPos = new int[2];
+            final Rect displayFrame = new Rect();
+            view.getLocationOnScreen(screenPos);
+            view.getWindowVisibleDisplayFrame(displayFrame);
+            final Context context = view.getContext();
+            final int width = view.getWidth();
+            final int height = view.getHeight();
+            final int midy = screenPos[1] + height / 2;
+            final int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
+            Toast cheatSheet = Toast.makeText(context, hint, Toast.LENGTH_SHORT);
+            if (midy < displayFrame.height()) {
+                cheatSheet.setGravity(Gravity.TOP | Gravity.RIGHT,
+                        screenWidth - screenPos[0] - width / 2, height);
+            } else {
+                cheatSheet.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, height);
+            }
+            cheatSheet.show();
+            return true;
+        }
+    }
+
 
 }
 

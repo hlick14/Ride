@@ -19,7 +19,7 @@
         />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/hotlist_hot"
+        android:id="@+id/notificationTextView"
         android:layout_width="wrap_content"
         android:minWidth="17sp"
         android:textSize="12sp"
