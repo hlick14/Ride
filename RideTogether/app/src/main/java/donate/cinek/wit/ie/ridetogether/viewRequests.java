@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -42,6 +43,7 @@ public class viewRequests extends android.support.v4.app.Fragment {
     private ViewPager viewPager;
     private ListView listView1;
     private String requestedUsername;
+    private Button accept,deny;
 
 
     public viewRequests() {
@@ -84,45 +86,21 @@ public class viewRequests extends android.support.v4.app.Fragment {
         listOfUsernames = new ArrayList<String>();
 
 
-//        String currentUser = ParseUser.getCurrentUser().getUsername();
-//        ParseQuery<ParseObject> q2 = ParseQuery.getQuery("FriendRequest");
-//        q2.whereEqualTo("RequestedUser", currentUser);
-//        q2.findInBackground(new FindCallback<ParseObject>() {
-//            @Override
-//            public void done(List<ParseObject> list, ParseException e) {
-//                if (e == null) {
-//                    for (int i = 0; i < list.size(); i++) {
-//
-//                        listOfUsernames.add(list.get(i).get("username").toString());
-//                    }
-//                    if (progressDialog.isShowing()) {
-//                        progressDialog.dismiss();
-//                    }
-//                } else {
-//                    Toast.makeText(getActivity(), "Could not load the list of users", Toast.LENGTH_SHORT).show();
-//                    if (progressDialog.isShowing()) {
-//                        progressDialog.dismiss();
-//                    }
-//                }
-//                if(list.isEmpty())
-//                {
-//                    listOfUsernames.add("No users found ");
-//                }
-//            }
-//        });
 
 
 
-        String currentUser = ParseUser.getCurrentUser().getUsername();
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereNotEqualTo("username", currentUser);
-
-        query.findInBackground(new FindCallback<ParseUser>() {
-            public void done(List<ParseUser> objects, ParseException e) {
+        final String currentUser = ParseUser.getCurrentUser().getUsername();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("FriendRequest");
+        query.whereEqualTo("RequestedUser", currentUser);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> users, ParseException e) {
                 if (e == null) {
-                    for (int i = 0; i < objects.size(); i++) {
+                    for (int i = 0; i < users.size(); i++) {
+                        if(!users.isEmpty()) {
 
-                        listOfUsernames.add(objects.get(i).get("username").toString());
+
+                            listOfUsernames.add(i,users.get(i).get("CurrentUser").toString());
+                        }
                     }
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
@@ -133,6 +111,9 @@ public class viewRequests extends android.support.v4.app.Fragment {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
+                }
+                if (users.isEmpty()) {
+                    listOfUsernames.add("There are no contact requests at the momonet ");
                 }
             }
         });
@@ -148,9 +129,12 @@ public class viewRequests extends android.support.v4.app.Fragment {
         listView1 = (ListView) getView().findViewById(R.id.listOfRequests);
 
 
+
+
         listView1.setAdapter(adapter);
 
         /////temp disbaled to test async method
+
         listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

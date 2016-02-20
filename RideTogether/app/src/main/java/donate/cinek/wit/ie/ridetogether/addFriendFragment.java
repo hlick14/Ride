@@ -84,9 +84,12 @@ public class addFriendFragment extends android.support.v4.app.Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        tempUsernName = new ArrayList<String>();
         friendSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tempUsernName=new ArrayList<String>();
+
 
 
                 name = Search.getEditText().getText().toString();
@@ -95,19 +98,21 @@ public class addFriendFragment extends android.support.v4.app.Fragment {
 
                 } else {
                     for (int i = 0; i < listOfUsernames.size(); i++) {
-                        tempUsernName.add(listOfUsernames.get(i));
 
-                        if (tempUsernName.get(i).equals(name)) {
+
+                        if (listOfUsernames.get(i).equals(name)) {
                             usersListView = (ListView) fragmentView.findViewById(R.id.foundUsers);
-
+                            tempUsernName.add(listOfUsernames.get(i));
 
                             namesArrayAdapter =
                                     new ArrayAdapter<String>(getActivity().getApplicationContext(),
                                             R.layout.user_list_item, tempUsernName);
                             usersListView.setAdapter(namesArrayAdapter);
-                        } else {
-                            Toast.makeText(getActivity(), "Wrong Username entered", Toast.LENGTH_SHORT).show();
+                            break;
                         }
+                    }
+                    if(tempUsernName.isEmpty()) {
+                        Toast.makeText(getActivity(), "Wrong Username entered", Toast.LENGTH_SHORT).show();
                     }
                     if (!tempUsernName.isEmpty()) {
 
@@ -119,16 +124,14 @@ public class addFriendFragment extends android.support.v4.app.Fragment {
                                 final String currentUser = ParseUser.getCurrentUser().getUsername();
                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("FriendRequest");
                                 query.whereEqualTo("CurrentUser", currentUser);
-                                query.whereEqualTo("RequestedUser", listOfUsernames.get(0));
-
-
+                                query.whereEqualTo("RequestedUser", tempUsernName.get(0));
                                 query.findInBackground(new FindCallback<ParseObject>() {
                                     public void done(List<ParseObject> users, ParseException e) {
                                         if (users.isEmpty()) {
 
                                             ParseObject requestedFriend = new ParseObject("FriendRequest");
                                             requestedFriend.put("CurrentUser", currentUser);
-                                            String tempRequestUsername = listOfUsernames.get(0);
+                                            String tempRequestUsername = tempUsernName.get(0);
                                             requestedFriend.put("RequestedUser", tempRequestUsername);//Set to one as all usernames are unique therefore the list will only contain one entry
 
 //                                                requestedFriend.saveInBackground();

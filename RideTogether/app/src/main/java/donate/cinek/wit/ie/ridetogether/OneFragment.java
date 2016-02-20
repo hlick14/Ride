@@ -189,7 +189,7 @@ public class OneFragment extends android.support.v4.app.Fragment {
                         dialog.dismiss();
 
                 }
-                if (hujumuniu.isEmpty()) {
+                if (StartingCity.isEmpty()) {
 
 
                     Bitmap icon = BitmapFactory.decodeResource(getActivity().getResources(),

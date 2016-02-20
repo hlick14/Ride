@@ -6,7 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.util.List;
 
@@ -28,9 +33,10 @@ public class viewReuestsAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
+
         viewRequestHolder holder = null;
 
-        String k = costam.get(position);
+        final String k = costam.get(position);
 
         if(row == null)
         {
@@ -40,6 +46,7 @@ public class viewReuestsAdapter extends ArrayAdapter<String> {
             holder = new viewRequestHolder();
 //            holder.imgIcon = (ImageView)row.findViewById(R.id.mapImage);
             holder.txtUsername = (TextView)row.findViewById(R.id.txtTitle);
+            holder.accept = (Button)row.findViewById(R.id.accept);
 
 
 
@@ -52,6 +59,27 @@ public class viewReuestsAdapter extends ArrayAdapter<String> {
 
         //SoloTrip sTrip = costam[position];
         holder.txtUsername.setText(k);
+        holder.accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String currentUser = ParseUser.getCurrentUser().getUsername();
+                ParseObject requestedFriend = new ParseObject("Friends");
+                requestedFriend.put("User", currentUser);
+
+
+                requestedFriend.put("FriendsUsername", k);
+
+//                                                requestedFriend.saveInBackground();
+                try {
+                    requestedFriend.save();
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+
+
+            }
+        });
+
 //        holder.imgIcon.setImageBitmap(k.getIcon());
 
 
@@ -62,6 +90,7 @@ public class viewReuestsAdapter extends ArrayAdapter<String> {
     {
 //        ImageView imgIcon;
         TextView txtUsername;
+        Button accept,deny;
 
     }
 }

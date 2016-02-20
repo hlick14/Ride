@@ -78,10 +78,17 @@ public class Options extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options2);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        Bundle extras = getIntent().getExtras();
-        if(!extras.isEmpty()) {
-            hot_number = extras.getInt("requests");
+        try {
+            Bundle extras = getIntent().getExtras();
+            if(!extras.isEmpty()) {
+                hot_number = extras.getInt("requests");
+            }
         }
+        catch (Exception e)
+        {
+
+        }
+
 
 
 

@@ -95,7 +95,7 @@ public class addFriend extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.addFriendTabs);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(0);
 
         setupTabIcons();
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
