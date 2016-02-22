@@ -1,18 +1,21 @@
 package donate.cinek.wit.ie.ridetogether;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +23,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.GetDataCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -37,6 +52,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
     TextView cityField;
     TextView detailsField;
     TextView weatherIcon;
+    ProgressDialog dialog;
 
     Context context;
     public static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
@@ -46,6 +62,14 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
 
     Handler handler;
     Bitmap userProfile;
+    String tDate,tTime;
+    TextView tv;
+    CountDownTimer mCountDownTimer;
+
+    long mInitialTime = DateUtils.DAY_IN_MILLIS * 2 +
+            DateUtils.HOUR_IN_MILLIS * 9 +
+            DateUtils.MINUTE_IN_MILLIS * 3 +
+            DateUtils.SECOND_IN_MILLIS * 42;
 
     public TwoFragment() {
         // Initializing handler for Open Weather api
@@ -56,6 +80,8 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        this.getActivity().setContentView(R.layout.fragment_two);
+        getUserProfileImage();
+        getTrips();
 
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "font/weather.ttf");
 
@@ -176,7 +202,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
                     ", " +
                     json.getJSONObject("sys").getString("country")+
                     "\n" + "Humidity: " + main.getString("humidity") + "%" +
-                    "\n" + "Temperature: " + main.getString("temp")+ " ℃");
+                    "\n" + "Temperature: "+ (String.format("%.2f", main.getDouble("temp"))+ " ℃"));
 
             JSONObject details = json.getJSONArray("weather").getJSONObject(0);
 
@@ -227,7 +253,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
         weatherIcon.setText(icon);
     }
     public void changeCity(String city){
-        updateWeatherData(latitude,longitude);
+        updateWeatherData(latitude, longitude);
     }
 
 
@@ -242,11 +268,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
         weatherIcon = (TextView)rootView.findViewById(R.id.weather_icon);
         de.hdodenhof.circleimageview.CircleImageView cv = (de.hdodenhof.circleimageview.CircleImageView) rootView.findViewById(R.id.circleUserProfileTab);
 
-        Activity opt = getActivity();
 
-        if(opt instanceof Options) {
-             userProfile =((Options) opt).getUserProfilePhoto();
-        }
 
 
         cv.setImageBitmap(userProfile);
@@ -256,6 +278,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
 
     @Override
     public void onLocationChanged(Location location) {
+
 
     }
 
@@ -273,4 +296,198 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
     public void onProviderDisabled(String provider) {
 
     }
+    public void getUserProfileImage()
+    {
+        ParseUser currentUser2 = ParseUser.getCurrentUser();
+        ///Fetching image
+        final ParseQuery<ParseObject> query2 = ParseQuery.getQuery("ImageUpload");
+        query2.whereEqualTo("CreatedbyUser", currentUser2);
+        query2.getFirstInBackground(new GetCallback<ParseObject>() {
+            public void done(ParseObject object, ParseException e) {
+                if (object != null) {
+
+                    ParseFile file = (ParseFile) object.get("ImageFile");
+                    file.getDataInBackground(new GetDataCallback() {
+                        public void done(byte[] data, ParseException e) {
+                            if (e == null) {
+                                userProfile = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                de.hdodenhof.circleimageview.CircleImageView cv = (de.hdodenhof.circleimageview.CircleImageView) getActivity().findViewById(R.id.circleUserProfileTab);
+                                cv.setImageBitmap(userProfile);
+
+
+
+
+                                // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
+                                //use this bitmap as you want
+                            } else {
+                                Toast.makeText(getActivity(), "Error Loading Data From Our Servers - Image Problem", Toast.LENGTH_SHORT).show();
+
+                            }
+                        }
+                    });
+
+                } else {
+                    Toast.makeText(getActivity(), "Error Loading Data From Our Servers - User Problem", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+    }
+    public void getTrips() {
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        final ParseQuery<ParseObject> query = ParseQuery.getQuery("Trip");
+        query.whereEqualTo("CreatedbyUser", currentUser);
+//        query.orderByAscending("UpdatedAt");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> StartingCity, ParseException e) {
+
+                if (e == null) {
+                    if (StartingCity.isEmpty()) {
+//                        if (dialog.isShowing())
+//                            dialog.dismiss();
+                        TextView tv = (TextView) getActivity().findViewById(R.id.TripTimer);
+                        tv.setText("You don't have any trips at the moment");
+
+                        return; //no objects
+                    }
+
+                    for (int i = 0; i < StartingCity.size(); i++) {
+
+                        ParseObject object = StartingCity.get(0);
+
+
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+                        formatter.setLenient(false);
+
+
+                        tDate = (String) object.get("TripDate");
+                        tTime = (String) object.get("TripTime");
+                        String tTimeFormatedMinutes="";
+                        String tTimeFormatedHours="";
+                        if (tTime!=null) {
+
+                            tTimeFormatedMinutes=tTime.substring(tTime.length() - 2);
+                            if(tTime.length()==3) {
+                                tTimeFormatedHours = tTime.substring(0, 1);
+                            }
+                            else if (tTime.length()==4)
+                            {
+                                tTimeFormatedHours = tTime.substring(0, 2);
+                            }
+
+
+                            } else {
+                                // whatever is appropriate in this case
+                                throw new IllegalArgumentException("word has less than characters then required!");
+                            }
+                        if (tDate!=null) {
+
+                            tTimeFormatedMinutes=tTime.substring(tTime.length() - 2);
+                            if(tTime.length()==3) {
+                                tTimeFormatedHours = tTime.substring(0, 1);
+                            }
+                            else if (tTime.length()==4)
+                            {
+                                tTimeFormatedHours = tTime.substring(0, 2);
+                            }
+
+
+                        } else {
+                            // whatever is appropriate in this case
+                            throw new IllegalArgumentException("word has less than characters then required!");
+                        }
+                        int dayOfmonthTemp = tDate.indexOf("-");
+                        int monthTemp = tDate.lastIndexOf("-");
+
+                        String dayOfMonthFormated = tDate.substring(0,dayOfmonthTemp);
+                        String month = tDate.substring(dayOfmonthTemp+1,monthTemp);
+                        String year = tDate.substring(monthTemp+1,tDate.length());
+
+                        Calendar thatDay = Calendar.getInstance();
+                        thatDay.set(Calendar.DAY_OF_MONTH,Integer.parseInt(dayOfMonthFormated));
+                        thatDay.set(Calendar.MONTH,Integer.parseInt(month)-1); // 0-11 so 1 less
+                        thatDay.set(Calendar.YEAR, Integer.parseInt(year));
+
+                        Calendar calendar1 = Calendar.getInstance();
+                        Calendar calendar2 = Calendar.getInstance();
+                        calendar1.set(2012, 04, 02);
+                        calendar2.set(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(dayOfMonthFormated));
+                        long milsecs1= calendar1.getTimeInMillis();
+                        long milsecs2 = calendar2.getTimeInMillis();
+                        long diff = milsecs2 - milsecs1;
+                        long dsecs = diff / 1000;
+                        long dminutes = diff / (60 * 1000);
+                        long dhours = diff / (60 * 60 * 1000);
+                        long ddays = diff / (24 * 60 * 60 * 1000);
+
+
+
+
+
+                         mInitialTime = DateUtils.DAY_IN_MILLIS * ddays +
+                                DateUtils.HOUR_IN_MILLIS * dhours +
+                                DateUtils.MINUTE_IN_MILLIS * dminutes +
+                                DateUtils.SECOND_IN_MILLIS * dsecs;
+//                        String oldTime = tDate + "," +tTimeFormatedHours+":"+tTimeFormatedMinutes;
+                        tv = (TextView) getActivity().findViewById(R.id.TripTimer);
+//                        tv.setText("Date of your next trip is " +tDate +   "Hours" + tTimeFormatedHours + "minutes "+tTimeFormatedMinutes);
+
+                        mCountDownTimer = new CountDownTimer(mInitialTime, 1000) {
+                            StringBuilder time = new StringBuilder();
+                            @Override
+                            public void onFinish() {
+                                tv.setText(DateUtils.formatElapsedTime(0));
+                                //mTextView.setText("Times Up!");
+                            }
+
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                time.setLength(0);
+                                // Use days if appropriate
+                                if(millisUntilFinished > DateUtils.DAY_IN_MILLIS) {
+                                    long count = millisUntilFinished / DateUtils.DAY_IN_MILLIS;
+                                    if(count > 1)
+                                        time.append(count).append(" days ");
+                                    else
+                                        time.append(count).append(" day ");
+
+                                    millisUntilFinished %= DateUtils.DAY_IN_MILLIS;
+                                }
+
+                                time.append(DateUtils.formatElapsedTime(Math.round(millisUntilFinished / 1000d)));
+                                tv.setText("Time until your next trip"+
+                                        "\n" +time.toString());
+                            }
+                        }.start();
+
+
+
+
+
+
+
+
+                }
+
+                } else {
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+
+                }
+                if (StartingCity.isEmpty()) {
+
+
+
+//                    if (dialog.isShowing())
+//                        dialog.dismiss();
+                }
+
+
+            }
+
+
+        });
+
+    }
+
 }

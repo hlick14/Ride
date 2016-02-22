@@ -1,5 +1,6 @@
 package donate.cinek.wit.ie.ridetogether;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -23,7 +24,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -112,12 +112,19 @@ public class TripInfo extends BaseActivity {
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 menuItem.setChecked(true);
                 mDrawerLayout.closeDrawers();
-                Toast.makeText(TripInfo.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                if (menuItem.getTitle() == "Log Out") {
+                    //Turn of the service from sinch
+
+                    ParseUser.logOut();
+                    Intent backToMain = new Intent(TripInfo.this, MainActivity.class);
+                    startActivity(backToMain);
+                }
                 return true;
             }
         });
