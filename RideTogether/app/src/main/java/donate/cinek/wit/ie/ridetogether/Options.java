@@ -242,6 +242,9 @@ private void setupTabIcons() {
 //        viewPager.setCurrentItem(2);
         viewPager.setAdapter(adapter);
     }
+    public Bitmap getUserProfilePhoto(){
+        return bitmap;
+    }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();

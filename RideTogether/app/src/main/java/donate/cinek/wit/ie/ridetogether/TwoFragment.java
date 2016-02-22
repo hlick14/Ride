@@ -1,9 +1,11 @@
 package donate.cinek.wit.ie.ridetogether;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
@@ -43,6 +45,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
     double latitude,longitude;
 
     Handler handler;
+    Bitmap userProfile;
 
     public TwoFragment() {
         // Initializing handler for Open Weather api
@@ -237,7 +240,16 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
 
 
         weatherIcon = (TextView)rootView.findViewById(R.id.weather_icon);
+        de.hdodenhof.circleimageview.CircleImageView cv = (de.hdodenhof.circleimageview.CircleImageView) rootView.findViewById(R.id.circleUserProfileTab);
 
+        Activity opt = getActivity();
+
+        if(opt instanceof Options) {
+             userProfile =((Options) opt).getUserProfilePhoto();
+        }
+
+
+        cv.setImageBitmap(userProfile);
         weatherIcon.setTypeface(weatherFont);
         return rootView;
     }

@@ -74,8 +74,10 @@ public class viewRequests extends android.support.v4.app.Fragment {
         fragmentView = inflater.inflate(R.layout.view_request_fragment, container, false);
 
 
-        getListOfUsers();
 
+//        accept = (Button) fragmentView.findViewById(R.id.accept);
+//        deny = (Button) fragmentView.findViewById(R.id.deny);
+        getListOfUsers();
         return fragmentView;
     }
     private void getListOfUsers() {
@@ -100,6 +102,12 @@ public class viewRequests extends android.support.v4.app.Fragment {
 
 
                             listOfUsernames.add(i,users.get(i).get("CurrentUser").toString());
+//                            if (accept.getVisibility() == View.INVISIBLE)
+//                            {
+//                                accept.setVisibility(View.VISIBLE);
+//
+//                                accept.setVisibility(View.VISIBLE);
+//                            }
                         }
                     }
                     if (progressDialog.isShowing()) {
@@ -113,7 +121,12 @@ public class viewRequests extends android.support.v4.app.Fragment {
                     }
                 }
                 if (users.isEmpty()) {
-                    listOfUsernames.add("There are no contact requests at the momonet ");
+//
+//                    accept.setVisibility(View.INVISIBLE);
+//
+//                    accept.setVisibility(View.INVISIBLE);
+                    listOfUsernames.add("There are no contact requests at the moment ");
+
                 }
             }
         });

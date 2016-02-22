@@ -64,7 +64,7 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
     }
     public void findTrip()
     {
-        final ParseQuery<ParseObject> tripQuery= ParseQuery.getQuery("ImageUpload");
+        final ParseQuery<ParseObject> tripQuery= ParseQuery.getQuery("TripImage");
         tripQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(final List<ParseObject> parseObjects, ParseException e) {
@@ -87,7 +87,7 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
                                     t++;
                                     if (t == (parseObjects.size() - 1)) {
 
-                                        getTrips();
+//                                        getTrips();
                                         t=0;
                                     }
 
