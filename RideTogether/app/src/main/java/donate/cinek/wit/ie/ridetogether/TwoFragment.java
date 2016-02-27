@@ -337,7 +337,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
         ParseUser currentUser = ParseUser.getCurrentUser();
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("Trip");
         query.whereEqualTo("CreatedbyUser", currentUser);
-//        query.orderByAscending("UpdatedAt");
+        query.orderByAscending("UpdatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> StartingCity, ParseException e) {
 
@@ -380,7 +380,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
                                 // whatever is appropriate in this case
                                 throw new IllegalArgumentException("word has less than characters then required!");
                             }
-                        if (tDate!=null) {
+                        if (tTime!=null) {
 
                             tTimeFormatedMinutes=tTime.substring(tTime.length() - 2);
                             if(tTime.length()==3) {
@@ -410,11 +410,18 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
 
                         Calendar calendar1 = Calendar.getInstance();
                         Calendar calendar2 = Calendar.getInstance();
-                        calendar1.set(2012, 04, 02);
-                        calendar2.set(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(dayOfMonthFormated));
+
+                        int cyear = calendar1.get(Calendar.YEAR);
+                        int cmonth = calendar1.get(Calendar.MONTH)+1;//months start at 0
+                        int cday = calendar1.get(Calendar.DAY_OF_MONTH);
+                        int cHour = calendar1.get(Calendar.HOUR_OF_DAY);
+                        int cMinutes = calendar1.get(Calendar.MINUTE);
+                        calendar1.set(cyear, cmonth, cday,cHour,cMinutes);
+
+                        calendar2.set(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(dayOfMonthFormated),Integer.parseInt(tTimeFormatedHours),Integer.parseInt(tTimeFormatedMinutes));
                         long milsecs1= calendar1.getTimeInMillis();
                         long milsecs2 = calendar2.getTimeInMillis();
-                        long diff = milsecs2 - milsecs1;
+                        long diff = milsecs1 - milsecs2;
                         long dsecs = diff / 1000;
                         long dminutes = diff / (60 * 1000);
                         long dhours = diff / (60 * 60 * 1000);
