@@ -1,0 +1,66 @@
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:fitsSystemWindows="true"
+        tools:context="donate.cinek.wit.ie.ridetogether.ListUsersActivity">
+
+        <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
+            android:layout_width="match_parent" android:theme="@style/AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
+                android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary" app:popupTheme="@style/PopupOverlay" />
+
+        </android.support.design.widget.AppBarLayout>
+        <android.support.design.widget.CoordinatorLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+            android:layout_height="match_parent" android:fitsSystemWindows="true"
+            tools:context="donate.cinek.wit.ie.ridetogether.ListUsersActivity">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp" >
+
+    <AutoCompleteTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/autocomplete"
+        android:layout_gravity="center"
+        android:hint="Type in your Location" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your location"
+        android:id="@+id/YourLoc"
+        android:layout_gravity="center_horizontal" />
+
+
+</LinearLayout>
+        </android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/drawer"/>
+
+
+
+
+
+</android.support.v4.widget.DrawerLayout>

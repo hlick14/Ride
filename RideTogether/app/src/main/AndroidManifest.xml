@@ -84,28 +84,28 @@
         </activity>
         <activity
             android:name=".Register"
-            android:label="Register"></activity>
+            android:label="Register" />
         <activity
             android:name=".LoginIn"
-            android:label="Sign In"></activity>
+            android:label="Sign In" />
         <activity
             android:name=".Trip"
-            android:label="Trip"></activity>
+            android:label="Trip" />
         <activity
             android:name=".Options"
-            android:label="@string/title_activity_options"></activity>
+            android:label="@string/title_activity_options" />
         <activity
             android:name=".SoloTripDipsplayer"
-            android:label="@string/title_activity_solo_trip_dipsplayer"></activity>
+            android:label="@string/title_activity_solo_trip_dipsplayer" />
         <activity
             android:name=".AllTripDisplayer"
-            android:label="@string/title_activity_all_trip_dipsplayer"></activity>
+            android:label="@string/title_activity_all_trip_dipsplayer" />
         <activity
             android:name=".AccountOptions"
-            android:label="@string/title_activity_account_options"></activity>
+            android:label="@string/title_activity_account_options" />
         <activity
             android:name=".BaseActivity"
-            android:label=""></activity>
+            android:label="" />
 
         <service android:name="com.parse.PushService" />
 
@@ -147,28 +147,31 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
         <activity
             android:name=".TripInfo"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
         <activity
             android:name=".popup"
-            android:theme="@style/AppTheme.popup"></activity>
+            android:theme="@style/AppTheme.popup" />
         <activity
             android:name=".ListUsersActivity"
             android:label="@string/title_activity_list_users"
-            android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <service android:name=".MessageService" />
 
         <activity
             android:name=".MessagingActivity"
             android:label="@string/title_activity_messaging"
-            android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".addFriend"
-            android:label="@string/title_activity_add_friend">
-           </activity>
+            android:label="@string/title_activity_add_friend"></activity>
+        <activity
+            android:name=".GooglePlacesAutocompleteActivity"
+            android:label="@string/title_activity_google_places_autocomplete"
+            android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -105,6 +105,8 @@
     <string name="title_activity_list_users">ListUsersActivity</string>
     <string name="title_activity_messaging">MessagingActivity</string>
     <string name="title_activity_add_friend">addFriend</string>
+    <string name="title_activity_google_places_autocomplete">GooglePlacesAutocompleteActivity
+    </string>
 
 
 </resources>

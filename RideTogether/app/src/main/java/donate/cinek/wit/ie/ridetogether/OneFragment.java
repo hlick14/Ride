@@ -72,7 +72,8 @@ public class OneFragment extends android.support.v4.app.Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent plan = new Intent(getActivity(), MapsActivity.class);
+                Intent plan = new Intent(getActivity(),GooglePlacesAutocompleteActivity.class);
+//                Intent plan = new Intent(getActivity(), MapsActivity.class);
                 startActivity(plan);
             }
         });
