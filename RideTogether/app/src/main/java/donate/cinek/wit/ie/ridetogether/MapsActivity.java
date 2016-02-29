@@ -18,6 +18,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -68,6 +69,9 @@ public class MapsActivity extends FragmentActivity implements  OnMapLongClickLis
     public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     static Bitmap snypImageScaled;
     String temp;
+    Button ok,cancel;
+    LatLng loc,orginLoc,destLoc ;
+    boolean orginOrDest;
 
 
     @Override
@@ -162,6 +166,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapLongClickLis
 
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.setMyLocationEnabled(true);
+//            mMap.getUiSettings().setZoomControlsEnabled(true);
             //mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             mMap.getUiSettings().setRotateGesturesEnabled(true);
 
@@ -174,19 +179,76 @@ public class MapsActivity extends FragmentActivity implements  OnMapLongClickLis
 
             mMap.setOnMapLongClickListener(this);
 
+
+            mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                public void onCameraChange(CameraPosition arg0) {
+                    mMap.clear();
+                    mMap.addMarker(new MarkerOptions().position(arg0.target));
+                    loc = arg0.target;
+                }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Snackbar.make(findViewById(R.id.mainLayout), "Press and hold to select start and end points", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Your Action", null).show();
+//        Snackbar.make(findViewById(R.id.mainLayout), "Press and hold to select start and end points", Snackbar.LENGTH_INDEFINITE)
+//                .setAction("Your Action", null).show();
+        try {
+            Bundle extras = getIntent().getExtras();
+            if(!extras.isEmpty()) {
+                orginOrDest = (Boolean) extras.get("orgin");
+                orginLoc = (LatLng) extras.get("orginLoc");
+                destLoc = (LatLng) extras.get("destLoc");
+
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+        ok=   (Button) this.findViewById(R.id.OKButton);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+             Intent backToGooglePlaces = new Intent(MapsActivity.this,GooglePlacesAutocompleteActivity.class);
+                if(orginOrDest==true) {
+                    backToGooglePlaces.putExtra("orgLatLong", loc);
+                    backToGooglePlaces.putExtra("orginLoc",orginLoc);
+                }
+                else {
+                    backToGooglePlaces.putExtra("destLatLong", loc);
+                    backToGooglePlaces.putExtra("orginLoc",orginLoc);
+                }
+                startActivity(backToGooglePlaces);
+            }
+        });
+        cancel=   (Button) this.findViewById(R.id.cancelButton);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent backToGooglePlaces = new Intent(MapsActivity.this,GooglePlacesAutocompleteActivity.class);
+                startActivity(backToGooglePlaces);
+            }
+        });
     }
+
+
 
 
     private void initilizeMap() {
         if (mMap == null) {
             mMap = ((MapFragment) getFragmentManager().findFragmentById(
                     R.id.map)).getMap();
+            View mapView = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getView();
+            View btnMyLocation = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(80,80); // size of button in dp
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+            params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+            params.setMargins(0, 0, 20, 0);
+            btnMyLocation.setLayoutParams(params);
 
             // check if map is created successfully or not
             if (mMap == null) {

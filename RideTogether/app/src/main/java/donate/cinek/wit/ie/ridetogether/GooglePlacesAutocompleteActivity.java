@@ -1,21 +1,28 @@
 package donate.cinek.wit.ie.ridetogether;
 
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -27,10 +34,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -47,7 +54,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class GooglePlacesAutocompleteActivity extends AppCompatActivity implements OnItemClickListener {
+public class GooglePlacesAutocompleteActivity extends AppCompatActivity implements OnItemClickListener,LocationListener {
 
     String name;
     String username;
@@ -57,37 +64,267 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
     Bitmap bitmap;
     String uSince;
     String Model, Engine;
-    private String currentUserId;
-    private ArrayAdapter<String> namesArrayAdapter;
-    private ArrayAdapter<Bitmap> imagesArrayAdapter;
-    private ArrayList<String> names, usernameForImages;
-    private ArrayList<Bitmap> images;
-    private ListView usersListView;
-    private Button logoutButton;
-    private ProgressDialog progressDialog;
     private BroadcastReceiver receiver = null;
     private Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
-    private TextView textView;
-
+    private TextView textView,textView2,textView3,textView4;
+    Context context;
+    public static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
+    public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+    Location location;
+    double orginLatitude,orginLongitude,destLatitude,destLongtitude;
+    AutoCompleteTextView autocompleteView,autocompleteView2;
+    LatLng orginLoc, destLoc,returnOrginLock ;
+    Button btn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_google_places_autocomplete);
-        AutoCompleteTextView autocompleteView = (AutoCompleteTextView) findViewById(R.id.autocomplete);
+         autocompleteView = (AutoCompleteTextView) findViewById(R.id.autocomplete);
+        autocompleteView2 = (AutoCompleteTextView) findViewById(R.id.autocomplete2);
         autocompleteView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.autocomplete_list_item));
+        autocompleteView2.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.autocomplete_list_item));
+        btn = (Button) findViewById(R.id.Finish);
+        try {
+            Bundle extras = getIntent().getExtras();
+            if(!extras.isEmpty()) {
+
+                orginLoc = (LatLng) extras.get("orgLatLong");
+                destLoc = (LatLng) extras.get("destLatLong");
+
+                returnOrginLock = (LatLng) extras.get("orginLoc");
+                if(orginLoc!=null) {
+                    if (returnOrginLock != null) {
+                        autocompleteView.setText("Point on Map");
+                    }
+                }
+                else if (destLoc!=null)
+                {
+
+                    autocompleteView2.setText("Point on Map");
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Log.d("RideTogether", "Extras are empty");
+
+        }
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         textView = (TextView) findViewById(R.id.YourLoc);
-
+        textView2 = (TextView) findViewById(R.id.ChoosePoint);
+        textView3 = (TextView) findViewById(R.id.YourLoc2);
+        textView4 = (TextView) findViewById(R.id.ChoosePoint2);
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
-        builder.append("My string. I ").append(" ");
-        builder.setSpan(new ImageSpan(this, R.drawable.ic_play_dark),
+        builder.append("").append(" ");
+        builder.setSpan(new ImageSpan(this, R.drawable.ic_my_location_white_24dp),
                 builder.length() - 1, builder.length(), 0);
-        builder.append(" Cree by Dexode");
+        builder.append(" Your Location");
 
         textView.setText(builder);
+        textView3.setText(builder);
+        LocationListener ls = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        final LocationListener finalLs = ls;
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                {
+                    context = getApplicationContext();
+                    LocationManager lm = null;
+                    orginLatitude = 0.0;
+                    orginLongitude = 0.0;
+                    boolean gps_enabled = false, network_enabled = false;
+                    if (lm == null)
+                        lm = (LocationManager) GooglePlacesAutocompleteActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                    try {
+
+                        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    } catch (Exception ex) {
+                    }
+                    try {
+                        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                    } catch (Exception ex) {
+                    }
+
+                    if (!gps_enabled ) {
+                        showAlert();
+
+                    }
+
+
+                    if (network_enabled) {
+                        lm.requestLocationUpdates(
+                                LocationManager.NETWORK_PROVIDER,
+                                MIN_TIME_BW_UPDATES,
+                                MIN_DISTANCE_CHANGE_FOR_UPDATES,  finalLs);
+                        Log.d("RideTogether", "Network based location Enabled");
+                        if (lm != null) {
+                            location = lm
+                                    .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                            if (location != null) {
+                                orginLatitude = location.getLatitude();
+                                orginLongitude = location.getLongitude();
+                            }
+                        }
+                    }
+                    // if GPS Enabled get lat/long using GPS Services
+                    if (gps_enabled) {
+                        if (location == null) {
+                            lm.requestLocationUpdates(
+                                    LocationManager.GPS_PROVIDER,
+                                    MIN_TIME_BW_UPDATES,
+                                    MIN_DISTANCE_CHANGE_FOR_UPDATES,  finalLs);
+                            Log.d("GPS", "GPS Enabled");
+                            if (lm != null) {
+                                location = lm
+                                        .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                                if (location != null) {
+                                    orginLatitude = location.getLatitude();
+                                    orginLongitude = location.getLongitude();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                autocompleteView2.setText("To: Your Location");
+
+            }
+        });
+        textView3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                {
+                    context = getApplicationContext();
+                    LocationManager lm = null;
+                    destLatitude = 0.0;
+                    destLongtitude = 0.0;
+                    boolean gps_enabled = false, network_enabled = false;
+                    if (lm == null)
+                        lm = (LocationManager) GooglePlacesAutocompleteActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                    try {
+
+                        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    } catch (Exception ex) {
+                    }
+                    try {
+                        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                    } catch (Exception ex) {
+                    }
+
+                    if (!gps_enabled) {
+                        showAlert();
+
+                    }
+
+
+                    if (network_enabled) {
+                        lm.requestLocationUpdates(
+                                LocationManager.NETWORK_PROVIDER,
+                                MIN_TIME_BW_UPDATES,
+                                MIN_DISTANCE_CHANGE_FOR_UPDATES, finalLs);
+                        Log.d("RideTogether", "Network based location Enabled");
+                        if (lm != null) {
+                            location = lm
+                                    .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                            if (location != null) {
+                                destLatitude = location.getLatitude();
+                                destLongtitude = location.getLongitude();
+                            }
+                        }
+                    }
+                    // if GPS Enabled get lat/long using GPS Services
+                    if (gps_enabled) {
+                        if (location == null) {
+                            lm.requestLocationUpdates(
+                                    LocationManager.GPS_PROVIDER,
+                                    MIN_TIME_BW_UPDATES,
+                                    MIN_DISTANCE_CHANGE_FOR_UPDATES, finalLs);
+                            Log.d("GPS", "GPS Enabled");
+                            if (lm != null) {
+                                location = lm
+                                        .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                                if (location != null) {
+                                    destLatitude = location.getLatitude();
+                                    destLongtitude = location.getLongitude();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                autocompleteView.setText("From: Your Location");
+
+            }
+        });
+
+        SpannableStringBuilder builder2 = new SpannableStringBuilder();
+        builder2.append("").append(" ");
+        builder2.setSpan(new ImageSpan(this, R.drawable.ic_add_location_white_24dp),
+                0, builder2.length(), 0);
+        builder2.append(" Choose your point on map");
+
+        textView2.setText(builder2);
+        textView4.setText(builder2);
+        textView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent maps = new Intent(GooglePlacesAutocompleteActivity.this, MapsActivity.class);
+                maps.putExtra("orgin",true);
+                if(orginLoc!=null)
+                {
+                    maps.putExtra("orginLoc",orginLoc);
+                }
+//                else if (destLoc!=null)
+//                {
+//                    maps.putExtra("destLoc",destLoc);
+//                }
+
+                startActivity(maps);
+
+            }
+        });
+        textView4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent maps = new Intent(GooglePlacesAutocompleteActivity.this, MapsActivity.class);
+                maps.putExtra("orgin",false);
+                if(orginLoc!=null)
+                {
+                    maps.putExtra("orginLoc",orginLoc);
+                }
+//                else if (destLoc!=null)
+//                {
+//                    maps.putExtra("destLoc",destLoc);
+//                }
+                startActivity(maps);
+
+            }
+        });
 
         getUserData();
 
@@ -116,14 +353,82 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
             }
         });
 
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(GooglePlacesAutocompleteActivity.this,"Orgin Destination is " + orginLoc+ "Destination desti" + destLoc,Toast.LENGTH_LONG).show();
+            }
+        });
+
 
     }
-
+    private void showAlert() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Enable Location")
+                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+                        "use this app")
+                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    }
+                });
+        dialog.show();
+    }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String description = (String) parent.getItemAtPosition(position);
         Toast.makeText(this, description, Toast.LENGTH_SHORT).show();
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+
+        switch (id) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            case R.id.chat:
+                final Intent intent = new Intent(getApplicationContext(), ListUsersActivity.class);
+                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+                startActivity(intent);
+                startService(serviceIntent);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
 
     class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 
@@ -149,6 +454,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
 
         @Override
         public String getItem(int position) {
+
             return resultList.get(position);
         }
 

@@ -26,6 +26,7 @@
         <item name="colorControlNormal">@color/colorPrimaryDark</item>
         <item name="colorControlActivated">@color/colorAccent</item>
 
+
         <!-- TABS-->
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
