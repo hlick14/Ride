@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -47,7 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements LocationListener {
+public class MapsActivity2 extends FragmentActivity implements  OnMapLongClickListener,LocationListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     Location location;
@@ -71,15 +72,38 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     Button ok,cancel;
     LatLng loc,orginLoc,destLoc ;
     boolean orginOrDest;
+    double olat,olong,dlat,dlong;
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_maps2);
         setUpMapIfNeeded();
+        try {
+            Bundle extras = getIntent().getExtras();
+            if(!extras.isEmpty()) {
 
+                olat = (double) extras.get("finalOrginLat");
+                olong = (double) extras.get("finalOrginLong");
+                orginLoc= new LatLng(olat,olong);
+
+                dlat = (double) extras.get("finalDestLat");
+                dlong = (double) extras.get("finalDestLong");
+                destLoc = new LatLng(dlat,dlong);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.d("RideTogether", "MapsActivity2 Extras are empty");
+
+        }
+
+        setRoute(orginLoc);
+        setRoute(destLoc);
 
         mapLayout = (RelativeLayout) this.findViewById(R.id.mainLayout);
 
@@ -163,26 +187,27 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
         try {
 
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.setMyLocationEnabled(false);
 //            mMap.getUiSettings().setZoomControlsEnabled(true);
             //mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             mMap.getUiSettings().setRotateGesturesEnabled(true);
 
             CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                    new LatLng(latitude, longitude)).zoom(12).build();
+                    new LatLng(olat, olong)).zoom(12).build();
+
 
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             initilizeMap();
 
-//            mMap.setOnMapLongClickListener(this);
+            mMap.setOnMapLongClickListener(this);
 
 
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 public void onCameraChange(CameraPosition arg0) {
                     mMap.clear();
-                    mMap.addMarker(new MarkerOptions().position(arg0.target));
+//                    mMap.addMarker(new MarkerOptions().position(arg0.target));
                     loc = arg0.target;
                 }
             });
@@ -191,48 +216,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             e.printStackTrace();
         }
 
-//        Snackbar.make(findViewById(R.id.mainLayout), "Press and hold to select start and end points", Snackbar.LENGTH_INDEFINITE)
-//                .setAction("Your Action", null).show();
-        try {
-            Bundle extras = getIntent().getExtras();
-            if(!extras.isEmpty()) {
-                orginOrDest = (Boolean) extras.get("orgin");
 
 
-            }
-        }
-        catch (Exception e)
-        {
-
-        }
-        ok=   (Button) this.findViewById(R.id.OKButton);
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-             Intent backToGooglePlaces = new Intent(MapsActivity.this,GooglePlacesAutocompleteActivity.class);
-                // if true = origin was selected
-                if(orginOrDest==true) {
-                    backToGooglePlaces.putExtra("orgLatLong", loc);
-
-
-                }
-                else {
-                    backToGooglePlaces.putExtra("destLatLong", loc);
-
-                }
-                startActivity(backToGooglePlaces);
-            }
-        });
-        cancel=   (Button) this.findViewById(R.id.cancelButton);
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent backToGooglePlaces = new Intent(MapsActivity.this,GooglePlacesAutocompleteActivity.class);
-                startActivity(backToGooglePlaces);
-            }
-        });
     }
 
 
@@ -277,53 +262,56 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         }
     }
 
+ public void setRoute(LatLng point)
+ {
+     Log.d("arg0", point.latitude + "-" + point.longitude);
+
+
+     // adding marker
+     if (markerPoints.size() > 1) {
+         markerPoints.clear();
+         mMap.clear();
+
+     }
+     markerPoints.add(point);
+
+     options = new MarkerOptions();
+
+     // Setting the position of the marker
+     options.position(point);
+
+     /**
+      * For the start location, the color of marker is GREEN and
+      * for the end location, the color of marker is RED.
+      */
+
+     new ReverseGeocodingTask(getBaseContext()).execute(point);
+
+
+     // Add new marker to the Google Map Android API V2
+     //mMap.addMarker(options);
+     if (markerPoints.size() >= 2) {
+         origin = markerPoints.get(0);
+         dest = markerPoints.get(1);
+
+         // Getting URL to the Google Directions API
+         String url = getDirectionsUrl(origin, dest);
+
+         DownloadTask downloadTask = new DownloadTask();
+
+         // Start downloading json data from Google Directions API
+         downloadTask.execute(url);
+     }
+
+ }
+
+
+    @Override
+    public void onMapLongClick(LatLng point) {
 
 
 
-//    @Override
-//    public void onMapLongClick(LatLng point) {
-//
-//
-//        Log.d("arg0", point.latitude + "-" + point.longitude);
-//
-//
-//        // adding marker
-//        if (markerPoints.size() > 1) {
-//            markerPoints.clear();
-//            mMap.clear();
-//
-//        }
-//        markerPoints.add(point);
-//
-//        options = new MarkerOptions();
-//
-//        // Setting the position of the marker
-//        options.position(point);
-//
-//        /**
-//         * For the start location, the color of marker is GREEN and
-//         * for the end location, the color of marker is RED.
-//         */
-//
-//        new ReverseGeocodingTask(getBaseContext()).execute(point);
-//
-//
-//        // Add new marker to the Google Map Android API V2
-//        //mMap.addMarker(options);
-//        if (markerPoints.size() >= 2) {
-//             origin = markerPoints.get(0);
-//             dest = markerPoints.get(1);
-//
-//            // Getting URL to the Google Directions API
-//            String url = getDirectionsUrl(origin, dest);
-//
-//            DownloadTask downloadTask = new DownloadTask();
-//
-//            // Start downloading json data from Google Directions API
-//            downloadTask.execute(url);
-//        }
-//
-//    }
+    }
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
@@ -512,8 +500,12 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 lineOptions.width(2);
                 lineOptions.color(Color.RED);
             }
-
+//            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//            builder.include(orginLoc);
+//            builder.include(destLoc);
+//            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 12));
             mMap.addPolyline(lineOptions);
+
 
             captureScreen();
         }
@@ -559,10 +551,10 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
                     addressToSend = address.getAddressLine(1);
                 }
-                 if (markerPoints.size() == 2)
+                if (markerPoints.size() == 2)
                 {
                     addressToSend2 = address.getAddressLine(1);
-                                    }
+                }
 
             }
             return addressText;
@@ -585,23 +577,23 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 mMap.setPadding(0, 160, 0, 60);
 
 
-                            Snackbar.make(findViewById(R.id.mainLayout), "Distance: " + distance + " Duration: " + duration, Snackbar.LENGTH_INDEFINITE).setAction("Confirm", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+                Snackbar.make(findViewById(R.id.mainLayout), "Distance: " + distance + " Duration: " + duration, Snackbar.LENGTH_INDEFINITE).setAction("Confirm", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                                      Intent UserTrips = new Intent(MapsActivity.this, TripInfo.class);
-                                    UserTrips.putExtra("mapDetails", addressToSend);
-                                    UserTrips.putExtra("mapDetails2", addressToSend2);
-                                    UserTrips.putExtra("originLat", origin.latitude);
-                                    UserTrips.putExtra("originLong", origin.longitude);
-                                    UserTrips.putExtra("destLat", dest.latitude);
-                                    UserTrips.putExtra("destLong", dest.longitude);
-                                    UserTrips.putExtra("distance", distance);
-                                    UserTrips.putExtra("duration", duration);
-                                    startActivity(UserTrips);
-                                }
+                        Intent UserTrips = new Intent(MapsActivity2.this, TripInfo.class);
+                        UserTrips.putExtra("mapDetails", addressToSend);
+                        UserTrips.putExtra("mapDetails2", addressToSend2);
+                        UserTrips.putExtra("originLat", origin.latitude);
+                        UserTrips.putExtra("originLong", origin.longitude);
+                        UserTrips.putExtra("destLat", dest.latitude);
+                        UserTrips.putExtra("destLong", dest.longitude);
+                        UserTrips.putExtra("distance", distance);
+                        UserTrips.putExtra("duration", duration);
+                        startActivity(UserTrips);
+                    }
 
-                            }).show();
+                }).show();
 
 
 
@@ -632,20 +624,20 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 /////////////Bundle can only store data up to 1 mb therefore map screenshot has to be scaled down and comrpessed
                 ///////////////////////////////Current 275,200
                 try {
-                snypImageScaled = Bitmap.createScaledBitmap(bmOverlay, 640, 480
-                        * bmOverlay.getHeight() / bmOverlay.getWidth(), false);
-                // Convert it to byte
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                // Compress image to lower quality scale 1 - 100
-                snypImageScaled.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
-                fo.write(bos.toByteArray());
-                // remember close file output
-                fo.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+                    snypImageScaled = Bitmap.createScaledBitmap(bmOverlay, 640, 480
+                            * bmOverlay.getHeight() / bmOverlay.getWidth(), false);
+                    // Convert it to byte
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    // Compress image to lower quality scale 1 - 100
+                    snypImageScaled.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
+                    fo.write(bos.toByteArray());
+                    // remember close file output
+                    fo.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
 
-            }
+                }
 
                 //Toast.makeText(MapsActivity.this, bmOverlay.getHeight(),Toast.LENGTH_SHORT).show();
             }

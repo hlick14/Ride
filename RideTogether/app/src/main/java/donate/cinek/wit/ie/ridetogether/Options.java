@@ -3,6 +3,7 @@ package donate.cinek.wit.ie.ridetogether;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
@@ -71,6 +72,7 @@ public class Options extends BaseActivity {
     public List<ParseObject> tempObjectHolder = new ArrayList<>();
     String tName, tDate, tTime;
     int t = 0;
+    public static final String PREFS_NAME = "RideTogether_Settings";
 
 
     @Override
@@ -78,6 +80,9 @@ public class Options extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options2);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        prefs.edit().clear().commit();
+
         try {
             Bundle extras = getIntent().getExtras();
             if(!extras.isEmpty()) {
