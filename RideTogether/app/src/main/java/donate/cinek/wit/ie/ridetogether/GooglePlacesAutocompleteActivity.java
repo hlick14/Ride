@@ -1,7 +1,6 @@
 package donate.cinek.wit.ie.ridetogether;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,7 +35,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,17 +82,13 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
     String olat,olong,dlat,dlong;
     double finalOriginLat,finalOriginLong,finalDestLat,finalDestLong;
 
-    private String currentUserId;
-    private ArrayAdapter<String> namesArrayAdapter;
-    private ArrayAdapter<Bitmap> imagesArrayAdapter;
-    private ArrayList<String> names, usernameForImages;
-    private ArrayList<Bitmap> images;
-    private ListView usersListView;
-    private Button logoutButton;
-    private ProgressDialog progressDialog;
+
     private BroadcastReceiver receiver = null;
     private Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
+    private boolean gotLocFromAddress;
+    private static double latitude,longitute;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +101,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
 //        autocompleteView2.setFocusable(false);
 
         btn = (Button) findViewById(R.id.Finish);
+
 //
 
         getUserData();
@@ -132,6 +127,13 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                     Intent backToMain = new Intent(GooglePlacesAutocompleteActivity.this, MainActivity.class);
                     startActivity(backToMain);
                 }
+                else    if (menuItem.getTitle() == "Settings") {
+
+
+
+                    Intent backToMain = new Intent(GooglePlacesAutocompleteActivity.this, AccountOptions.class);
+                    startActivity(backToMain);
+                }
                 return true;
             }
         });
@@ -139,7 +141,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(GooglePlacesAutocompleteActivity.this, "Orgin lat is : "+finalOriginLat  + "/n/"+
+                Toast.makeText(GooglePlacesAutocompleteActivity.this, "Lat and long form places api" +latitude + longitute +"Orgin lat is : "+finalOriginLat  + "/n/"+
                         "Orgin long is : "+finalOriginLong  + "/n/"+
                         "Destination lat is : "+finalDestLat  + "/n/"+
                         "Destination long is : "+finalDestLong  + "/n/", Toast.LENGTH_LONG).show();
@@ -583,6 +585,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                         resultList = mPlaceAPI.autocomplete(constraint.toString());
 
                         filterResults.values = resultList;
+
                         filterResults.count = resultList.size();
                     }
 
@@ -592,7 +595,9 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                 @Override
                 protected void publishResults(CharSequence constraint, FilterResults results) {
                     if (results != null && results.count > 0) {
+
                         notifyDataSetChanged();
+
                     } else {
                         notifyDataSetInvalidated();
                     }
@@ -602,86 +607,8 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
             return filter;
         }
     }
-    private void setConversationsList() {
-        currentUserId = ParseUser.getCurrentUser().getUsername();
-        names = new ArrayList<String>();
-        images = new ArrayList<Bitmap>();
-        usernameForImages = new ArrayList<String>();
 
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereNotEqualTo("username", currentUserId);
-        query.findInBackground(new FindCallback<ParseUser>() {
-            public void done(List<ParseUser> userList, ParseException e) {
-                if (e == null) {
-                    for (int i = 0; i < userList.size(); i++) {
 
-                        usernameForImages.add(userList.get(i).getObjectId());
-
-                        names.add(userList.get(i).getUsername());
-
-                        ///Fetching image
-
-//                        final ParseQuery<ParseObject> query3 = ParseQuery.getQuery("ImageUpload");
-//                        query3.whereEqualTo("CreatedbyUser", usernameForImages.get(i));
-//                        query3.getFirstInBackground(new GetCallback<ParseObject>() {
-//                            public void done(ParseObject object, ParseException e) {
-//                                if (object != null) {
-//
-//                                    ParseFile file = (ParseFile) object.get("ImageFile");
-//                                    file.getDataInBackground(new GetDataCallback() {
-//                                        public void done(byte[] data, ParseException e) {
-//                                            if (e == null) {
-//                                                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//                                                images.add(bitmap);
-//                                                // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
-//                                                //use this bitmap as you want
-//                                            } else {
-//                                                Toast.makeText(ListUsersActivity.this, "Zdjecie jest puste" + e.getMessage().toString(), Toast.LENGTH_LONG).show();
-//
-//                                            }
-//                                        }
-//
-//
-//                                    });
-//
-//                                } else {
-//                                    Toast.makeText(ListUsersActivity.this, "objekt jest pusty" + e.getMessage().toString(), Toast.LENGTH_LONG).show();
-//
-//                                }
-//                            }
-//                        });
-//
-//
-                    }
-
-                    usersListView = (ListView) findViewById(R.id.usersListView);
-                    namesArrayAdapter =
-                            new ArrayAdapter<String>(getApplicationContext(),
-                                    R.layout.user_list_item, names);
-                    usersListView.setAdapter(namesArrayAdapter);
-//                    imagesArrayAdapter = new ArrayAdapter<Bitmap>(getApplicationContext(),R.layout.user_list_item,images);
-//                    usersListView.setAdapter(imagesArrayAdapter);
-
-                    usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> a, View v, int i, long l) {
-//                            openConversation(names, i);
-                        }
-                    });
-
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Error loading user list",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        Toast.makeText(getApplicationContext(),
-                "" + usernameForImages,
-                Toast.LENGTH_LONG).show();
-
-    }
 
     public void getUserData() {
         String currentUser = ParseUser.getCurrentUser().getUsername();
@@ -791,4 +718,8 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
 
 
     }
+
 }
+
+
+

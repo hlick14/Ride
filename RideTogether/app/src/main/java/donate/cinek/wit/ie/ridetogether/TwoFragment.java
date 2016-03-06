@@ -2,6 +2,7 @@ package donate.cinek.wit.ie.ridetogether;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,11 +16,17 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +43,7 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +73,17 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
     String tDate,tTime;
     TextView tv;
     CountDownTimer mCountDownTimer;
+    private String currentUserId;
+    private ArrayAdapter<String> namesArrayAdapter;
+    private ArrayAdapter<Bitmap> imagesArrayAdapter;
+    private ArrayList<String> names, usernameForImages;
+    private ArrayList<Bitmap> images;
+    private ListView usersListView;
+    private Button logoutButton;
+    private ProgressDialog progressDialog;
+    private BroadcastReceiver receiver = null;
+    private Toolbar toolbar;
+    private DrawerLayout mDrawerLayout;
 
     long mInitialTime = DateUtils.DAY_IN_MILLIS * 2 +
             DateUtils.HOUR_IN_MILLIS * 9 +
@@ -262,6 +281,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_two, container, false);
         cityField = (TextView)rootView.findViewById(R.id.city_field);
+        setConversationsList();
 
 
 
@@ -275,7 +295,10 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
         weatherIcon.setTypeface(weatherFont);
         return rootView;
     }
-
+    @Override
+    public void onResume() {
+       super.onResume();
+    }
     @Override
     public void onLocationChanged(Location location) {
 
@@ -294,6 +317,86 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
 
     @Override
     public void onProviderDisabled(String provider) {
+
+    }
+    private void setConversationsList() {
+        currentUserId = ParseUser.getCurrentUser().getUsername();
+        names = new ArrayList<String>();
+        images = new ArrayList<Bitmap>();
+        usernameForImages = new ArrayList<String>();
+
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereNotEqualTo("username", currentUserId);
+        query.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> userList, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < userList.size(); i++) {
+
+                        usernameForImages.add(userList.get(i).getObjectId());
+
+                        names.add(userList.get(i).getUsername());
+
+                        ///Fetching image
+
+//                        final ParseQuery<ParseObject> query3 = ParseQuery.getQuery("ImageUpload");
+//                        query3.whereEqualTo("CreatedbyUser", usernameForImages.get(i));
+//                        query3.getFirstInBackground(new GetCallback<ParseObject>() {
+//                            public void done(ParseObject object, ParseException e) {
+//                                if (object != null) {
+//
+//                                    ParseFile file = (ParseFile) object.get("ImageFile");
+//                                    file.getDataInBackground(new GetDataCallback() {
+//                                        public void done(byte[] data, ParseException e) {
+//                                            if (e == null) {
+//                                                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+//                                                images.add(bitmap);
+//                                                // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
+//                                                //use this bitmap as you want
+//                                            } else {
+//                                                Toast.makeText(ListUsersActivity.this, "Zdjecie jest puste" + e.getMessage().toString(), Toast.LENGTH_LONG).show();
+//
+//                                            }
+//                                        }
+//
+//
+//                                    });
+//
+//                                } else {
+//                                    Toast.makeText(ListUsersActivity.this, "objekt jest pusty" + e.getMessage().toString(), Toast.LENGTH_LONG).show();
+//
+//                                }
+//                            }
+//                        });
+//
+//
+                    }
+
+                    usersListView = (ListView) getActivity().findViewById(R.id.usersListView2);
+                    namesArrayAdapter =
+                            new ArrayAdapter<String>(getActivity().getApplicationContext(),
+                                    R.layout.user_list_item, names);
+                    usersListView.setAdapter(namesArrayAdapter);
+//                    imagesArrayAdapter = new ArrayAdapter<Bitmap>(getApplicationContext(),R.layout.user_list_item,images);
+//                    usersListView.setAdapter(imagesArrayAdapter);
+
+                    usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> a, View v, int i, long l) {
+//                            Conversation(names, i);
+                        }
+                    });
+
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Error loading user list",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        Toast.makeText(getActivity().getApplicationContext(),
+                "" + usernameForImages,
+                Toast.LENGTH_LONG).show();
 
     }
     public void getUserProfileImage()

@@ -65,10 +65,12 @@
         <com.rey.material.widget.Button
             android:id="@+id/Login"
             android:layout_marginTop="4dp"
-            android:layout_width="match_parent"
+            android:layout_width="150dp"
+            android:background="@drawable/roundedbutton"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:text="Login"
-            android:background="@color/postive_btn"
+
             />
 
 

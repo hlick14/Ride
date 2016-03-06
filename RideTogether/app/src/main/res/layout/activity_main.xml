@@ -14,7 +14,8 @@ tools:context="donate.cinek.wit.ie.ridetogether.FirstScreen">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/relativeLayout2">
 
         <ImageView
             android:layout_width="match_parent"
@@ -29,28 +30,28 @@ tools:context="donate.cinek.wit.ie.ridetogether.FirstScreen">
 
     </RelativeLayout>
     <com.rey.material.widget.Button
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
+        android:background="@drawable/roundedbutton"
+        android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:text="@string/first_screen_login"
         android:id="@+id/fLogin"
-        android:background="@color/postive_btn"
+
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="64dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        />
+        android:layout_alignEnd="@+id/relativeLayout2" />
 
 
     <com.rey.material.widget.Button
 
-    android:layout_width="wrap_content"
+        android:layout_width="150dp"
+        android:background="@drawable/roundedbutton"
+        android:layout_gravity="center"
     android:layout_height="wrap_content"
     android:text="@string/first_screen_register"
     android:id="@+id/fRegister"
-    android:background="@color/postive_btn"
-    android:layout_alignParentBottom="true"
-    android:layout_alignStart="@+id/fLogin"
-    android:layout_alignParentEnd="true" />
+
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 
 
 

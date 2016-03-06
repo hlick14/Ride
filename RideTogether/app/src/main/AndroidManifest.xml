@@ -74,6 +74,7 @@
         android:label="@string/app_name"
         android:hardwareAccelerated="false"
         android:theme="@style/Theme.AppCompat.NoActionBar">
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
@@ -125,6 +126,7 @@
                 <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">

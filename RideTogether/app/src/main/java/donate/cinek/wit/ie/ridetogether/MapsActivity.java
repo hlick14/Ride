@@ -539,6 +539,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             String addressText = "";
 
             try {
+
                 addresses = geocoder.getFromLocation(latitude, longitude, 1);
 
             } catch (IOException e) {

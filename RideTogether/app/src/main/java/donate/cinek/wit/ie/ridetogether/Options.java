@@ -135,6 +135,13 @@ public class Options extends BaseActivity {
                     Intent backToMain = new Intent(Options.this, MainActivity.class);
                     startActivity(backToMain);
                 }
+                else    if (menuItem.getTitle() == "Settings") {
+
+
+
+                    Intent backToMain = new Intent(Options.this, AccountOptions.class);
+                    startActivity(backToMain);
+                }
                 return true;
             }
         });

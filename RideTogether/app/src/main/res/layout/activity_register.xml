@@ -168,11 +168,13 @@
 
         <Button
             android:id="@+id/Register"
-            android:layout_marginTop="4dp"
-            android:layout_width="match_parent"
+            android:layout_marginTop="40dp"
+            android:layout_width="150dp"
+            android:background="@drawable/roundedbutton"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:text='@string/Register'
-            android:background="@color/postive_btn"
+
             />
 
 

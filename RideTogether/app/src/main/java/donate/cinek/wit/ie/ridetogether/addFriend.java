@@ -113,6 +113,13 @@ public class addFriend extends AppCompatActivity {
                     Intent backToMain = new Intent(addFriend.this, MainActivity.class);
                     startActivity(backToMain);
                 }
+                else    if (menuItem.getTitle() == "Settings") {
+
+
+
+                    Intent backToMain = new Intent(addFriend.this, AccountOptions.class);
+                    startActivity(backToMain);
+                }
                 return true;
             }
         });

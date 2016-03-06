@@ -7,13 +7,13 @@
 <LinearLayout
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
-android:layout_height="250dp"
+android:layout_height="210dp"
 android:orientation="horizontal"
     android:id="@+id/topSection">
 
 <LinearLayout
     android:layout_width="0dp"
-    android:layout_height="250dp"
+    android:layout_height="210dp"
     android:layout_weight="1"
     android:orientation="vertical" >
 
@@ -41,7 +41,7 @@ android:orientation="horizontal"
 
     <LinearLayout
     android:layout_width="0dp"
-    android:layout_height="250dp"
+    android:layout_height="210dp"
     android:layout_weight="1"
     android:layout_margin="1dp"
     android:id="@+id/fragment_two"
@@ -62,6 +62,7 @@ android:orientation="horizontal"
 
     <TextView
         android:id="@+id/city_field"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|right"
@@ -74,20 +75,59 @@ android:orientation="horizontal"
 
 
 </LinearLayout>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:id="@+id/middleSection"
+        android:layout_below="@+id/topSection">
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="3dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+
+            android:background="@color/colorPrimary" />
+
+        <TextView
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/customborder"
+
+            android:gravity="center"
+            android:text="Your Friends"
+            android:shape="rectangle"
+            android:id="@+id/textView" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="3dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary" />
+
+
+    </LinearLayout>
 
 <LinearLayout
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="horizontal"
-    android:layout_below="@+id/topSection">
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:padding="16dp"
-tools:context="donate.cinek.wit.ie.ridetogether.msg"
+android:id="@+id/buttonSection"
 
-android:id="@+id/usersListView">
-</ListView></LinearLayout>
+android:layout_below="@+id/middleSection">
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        tools:context="donate.cinek.wit.ie.ridetogether.msg"
+
+        android:id="@+id/usersListView2"
+        android:layout_weight="1">
+    </ListView>
+
+</LinearLayout>
 </RelativeLayout>

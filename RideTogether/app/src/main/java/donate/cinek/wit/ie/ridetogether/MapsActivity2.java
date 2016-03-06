@@ -441,9 +441,11 @@ public class MapsActivity2 extends FragmentActivity implements  OnMapLongClickLi
 
             try {
                 jObject = new JSONObject(jsonData[0]);
+
                 DirectionsJSONParser parser = new DirectionsJSONParser();
 
                 // Starts parsing data
+                Log.d("RideTogether: ",routes.toString());
                 routes = parser.parse(jObject);
             } catch (Exception e) {
                 e.printStackTrace();
