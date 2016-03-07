@@ -25,7 +25,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="match_parent" android:fitsSystemWindows="true"
-        tools:context="donate.cinek.wit.ie.ridetogether.ListUsersActivity">
+        tools:context="donate.cinek.wit.ie.ridetogether.ListUsersActivity"
+        android:layout_marginTop="10dp">
 
     <include layout="@layout/content_list_users" />
         </android.support.design.widget.CoordinatorLayout>

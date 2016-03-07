@@ -27,64 +27,51 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
         </android.support.design.widget.AppBarLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_below="@+id/toolbar"
             android:layout_marginTop="70dp"
+            android:layout_weight="1.0"
 
-            >
+            android:orientation="vertical">
+
+
+
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:id="@+id/SettingsName"
-                android:clickable="false"
-                android:cursorVisible="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:id="@+id/SettingsEmail"
-
-                android:clickable="false"
-                android:cursorVisible="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_below="@+id/SettingsName"
-                />
-
-
-            <Button
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/changePassword"
-                android:layout_marginTop="10dp"
                 android:id="@+id/pass_btn"
-                android:layout_below="@+id/SettingsEmail"
-                android:ems="10"
-                android:background="@color/colorPrimary"
+                android:textSize="20sp"
+                android:textColor="@color/text"
+                android:layout_marginTop="6dp"
+
+
+
+
                 />
 
 
+            <TextView
+                android:layout_width="wrap_content"
 
-            <Button
-                android:layout_width="match_parent"
+
                 android:layout_height="wrap_content"
                 android:text="@string/deleteAccountButton"
                 android:id="@+id/delete_btn"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/pass_btn"
-                android:ems="10"
-                android:background="@color/colorPrimary"
+                android:layout_marginTop="9dp"
+                android:textSize="20sp"
+                android:textColor="@color/text"
+
+
+
+
+
                 />
 
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 

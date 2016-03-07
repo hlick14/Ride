@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.internal.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
@@ -42,7 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class AccountOptions extends AppCompatActivity {
-    Button passResetButton, userDeleteButton;
+    TextView passResetButton, userDeleteButton;
     TextView uName;
     TextView uPassword;
     protected ImageButton account;
@@ -76,21 +77,25 @@ public class AccountOptions extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         getUserData();
-
-        //super.set();
-
         final ParseUser currentUser = ParseUser.getCurrentUser();
         String cUserName = (String) currentUser.get("Name");
         final String cUserEmail = (String) currentUser.getEmail();
 
-        uName = (TextView) findViewById(R.id.SettingsName);
-        uName.setText("User: " + cUserName);
-        uPassword = (TextView) findViewById(R.id.SettingsEmail);
-        uPassword.setText("Email: " + cUserEmail);
+        toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(cUserName);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //super.set();
+
+
+
 
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
         query.whereEqualTo("Email", cUserEmail);
-        passResetButton = (Button) findViewById(R.id.pass_btn);
+        passResetButton = (TextView) findViewById(R.id.pass_btn);
         passResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,7 +113,7 @@ public class AccountOptions extends AppCompatActivity {
                         });
             }
         });
-        userDeleteButton = (Button) findViewById(R.id.delete_btn);
+        userDeleteButton = (TextView) findViewById(R.id.delete_btn);
         userDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
