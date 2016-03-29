@@ -2,6 +2,7 @@ package donate.cinek.wit.ie.ridetogether;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,8 +50,14 @@ public class viewReuestsAdapter extends ArrayAdapter<String> {
             holder = new viewRequestHolder();
 //            holder.imgIcon = (ImageView)row.findViewById(R.id.mapImage);
             holder.txtUsername = (TextView)row.findViewById(R.id.txtTitle);
-            holder.accept = (Button)row.findViewById(R.id.accept);
-            holder.deny = (Button)row.findViewById(R.id.deny);
+
+            holder.accept = (Button) row.findViewById(R.id.accept);
+            holder.deny = (Button) row.findViewById(R.id.deny);
+            if(costam.get(0)=="There are no contact requests at the moment ")
+            {                holder.accept.setVisibility(View.INVISIBLE);
+                holder.deny.setVisibility(View.INVISIBLE);
+
+            }
 
 
             row.setTag(holder);
@@ -68,17 +75,16 @@ public class viewReuestsAdapter extends ArrayAdapter<String> {
                 final String currentUser = ParseUser.getCurrentUser().getUsername();
                 ParseObject requestedFriend = new ParseObject("Friends");
                 requestedFriend.put("User", currentUser);
-
-
                 requestedFriend.put("FriendsUsername", k);
+                requestedFriend.put("User", k);
+                requestedFriend.put("FriendsUsername", currentUser);
 
-//                                                requestedFriend.saveInBackground();
+//
                 try {
                     requestedFriend.save();
                 } catch (ParseException e1) {
                     e1.printStackTrace();
                 }
-                Toast.makeText(getContext(), "Added to Friends db", Toast.LENGTH_SHORT).show();
 
 
                 ParseQuery<ParseObject> qImage = ParseQuery.getQuery("FriendRequest");
@@ -103,51 +109,11 @@ public class viewReuestsAdapter extends ArrayAdapter<String> {
 
 //        holder.imgIcon.setImageBitmap(k.getIcon());
                 //        holder.imgIcon.setImageBitmap(k.getIcon.finish();
+                Intent home = new Intent(viewReuestsAdapter.super.getContext(), Options.class);
+                getContext().startActivity(home);
             }
         });
-        holder.accept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String currentUser = ParseUser.getCurrentUser().getUsername();
-                ParseObject requestedFriend = new ParseObject("Friends");
-                requestedFriend.put("User", currentUser);
 
-
-                requestedFriend.put("FriendsUsername", k);
-
-//                                                requestedFriend.saveInBackground();
-                try {
-                    requestedFriend.save();
-                } catch (ParseException e1) {
-                    e1.printStackTrace();
-                }
-                Toast.makeText(getContext(), "Added to Friends db", Toast.LENGTH_SHORT).show();
-
-
-                ParseQuery<ParseObject> qImage = ParseQuery.getQuery("FriendRequest");
-                qImage.whereEqualTo("CurrentUser", k);
-                qImage.whereEqualTo("RequestedUser", currentUser);
-                qImage.findInBackground(new FindCallback<ParseObject>() {
-                    public void done(List<ParseObject> rows, com.parse.ParseException e) {
-                        if (e == null) {
-                            for (int i = 0; i < rows.size(); i++) {
-                                try {
-                                    rows.get(i).delete();
-                                } catch (com.parse.ParseException e1) {
-                                    e1.printStackTrace();
-                                }
-                            }
-                        } else {
-
-                        }
-                    }
-                });
-
-
-//        holder.imgIcon.setImageBitmap(k.getIcon());
-
-            }
-        });
         holder.deny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,7 +145,8 @@ public class viewReuestsAdapter extends ArrayAdapter<String> {
 
 
 //        holder.imgIcon.setImageBitmap(k.getIcon());
-
+                Intent home = new Intent(viewReuestsAdapter.super.getContext(), Options.class);
+                getContext().startActivity(home);
             }
         });
         this.notifyDataSetChanged();

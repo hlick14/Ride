@@ -75,8 +75,9 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
     CountDownTimer mCountDownTimer;
     private String currentUserId;
     private ArrayAdapter<String> namesArrayAdapter;
-    private ArrayAdapter<Bitmap> imagesArrayAdapter;
-    private ArrayList<String> names, usernameForImages;
+    private ArrayList<String> names;
+
+
     private ArrayList<Bitmap> images;
     private ListView usersListView;
     private Button logoutButton;
@@ -323,52 +324,24 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
         currentUserId = ParseUser.getCurrentUser().getUsername();
         names = new ArrayList<String>();
         images = new ArrayList<Bitmap>();
-        usernameForImages = new ArrayList<String>();
 
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereNotEqualTo("username", currentUserId);
-        query.findInBackground(new FindCallback<ParseUser>() {
-            public void done(List<ParseUser> userList, ParseException e) {
+        ParseQuery<ParseObject> q2 = ParseQuery.getQuery("Friends");
+
+        q2.whereEqualTo("User", currentUserId);
+        q2.whereNotEqualTo("FriendsUsername", currentUserId);
+        q2.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> userList, ParseException e) {
                 if (e == null) {
                     for (int i = 0; i < userList.size(); i++) {
 
-                        usernameForImages.add(userList.get(i).getObjectId());
 
-                        names.add(userList.get(i).getUsername());
+                        names.add((String) userList.get(i).get("FriendsUsername"));
 
-                        ///Fetching image
 
-//                        final ParseQuery<ParseObject> query3 = ParseQuery.getQuery("ImageUpload");
-//                        query3.whereEqualTo("CreatedbyUser", usernameForImages.get(i));
-//                        query3.getFirstInBackground(new GetCallback<ParseObject>() {
-//                            public void done(ParseObject object, ParseException e) {
-//                                if (object != null) {
-//
-//                                    ParseFile file = (ParseFile) object.get("ImageFile");
-//                                    file.getDataInBackground(new GetDataCallback() {
-//                                        public void done(byte[] data, ParseException e) {
-//                                            if (e == null) {
-//                                                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//                                                images.add(bitmap);
-//                                                // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
-//                                                //use this bitmap as you want
-//                                            } else {
-//                                                Toast.makeText(ListUsersActivity.this, "Zdjecie jest puste" + e.getMessage().toString(), Toast.LENGTH_LONG).show();
-//
-//                                            }
-//                                        }
-//
-//
-//                                    });
-//
-//                                } else {
-//                                    Toast.makeText(ListUsersActivity.this, "objekt jest pusty" + e.getMessage().toString(), Toast.LENGTH_LONG).show();
-//
-//                                }
-//                            }
-//                        });
-//
-//
+                    }
+                    if(userList.isEmpty())
+                    {
+                        names.add("Friend list is empty");
                     }
 
                     usersListView = (ListView) getActivity().findViewById(R.id.usersListView2);
@@ -394,9 +367,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
             }
         });
 
-        Toast.makeText(getActivity().getApplicationContext(),
-                "" + usernameForImages,
-                Toast.LENGTH_LONG).show();
+
 
     }
     public void getUserProfileImage()
@@ -418,10 +389,6 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
                                 cv.setImageBitmap(userProfile);
 
 
-
-
-                                // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
-                                //use this bitmap as you want
                             } else {
                                 Toast.makeText(getActivity(), "Error Loading Data From Our Servers - Image Problem", Toast.LENGTH_SHORT).show();
 

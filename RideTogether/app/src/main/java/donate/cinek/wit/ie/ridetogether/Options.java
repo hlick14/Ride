@@ -187,7 +187,7 @@ private void setupTabIcons() {
                 final Intent addFriendIntent = new Intent(getApplicationContext(), addFriend.class);
 
                 startActivity(addFriendIntent);
-                Toast.makeText(Options.this, "Its Working", Toast.LENGTH_SHORT).show();
+
 
             }
         };
