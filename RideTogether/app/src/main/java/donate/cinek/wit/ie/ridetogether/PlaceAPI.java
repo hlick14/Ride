@@ -32,7 +32,6 @@ public class PlaceAPI {
 
     public ArrayList<String> autocomplete(String input) {
 
-
         HttpURLConnection conn = null;
         StringBuilder jsonResults = new StringBuilder();
 
@@ -138,6 +137,7 @@ public class PlaceAPI {
                 resultListId.add(predsJsonArray.getJSONObject(i).getString("place_id"));
 
             }
+            Log.e("AutoComplete",resultListId.toString());
             ar.add(resultListId);
         } catch (JSONException e) {
             Log.e(TAG, "Cannot process JSON results", e);
@@ -147,6 +147,7 @@ public class PlaceAPI {
     }
 
     public ArrayList<ArrayList<String>> getExample(String input) {
+
         resultList = autocomplete(input);
         resultListId = autocompleteId(input);
         Log.v("AUTO COMPLETE",  resultList.toString());

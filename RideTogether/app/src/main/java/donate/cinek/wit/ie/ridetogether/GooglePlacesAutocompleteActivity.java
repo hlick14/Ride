@@ -40,10 +40,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -83,6 +79,8 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
     private boolean gotLocFromAddress;
     private static double latitude, longitute;
     private GoogleApiClient mGoogleApiClient;
+    ArrayList<Double> list = new ArrayList<Double>();
+    int positionHolder = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -550,7 +548,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         int mResource;
 
         PlaceAPI mPlaceAPI = new PlaceAPI();
-
+        PlacesIdDetails pl = new PlacesIdDetails();
 
 
         public PlacesAutoCompleteAdapter(Context context, int resource) {
@@ -569,19 +567,15 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
 
         @Override
         public String getItem(int position) {
+            //call getlatlong method here with postion
+
+
+
             return resultListDesc.get(position);
         }
 
         @Override
         public Filter getFilter() {
-            mGoogleApiClient = new GoogleApiClient
-                    .Builder(getContext())
-                    .addApi(Places.GEO_DATA_API)
-                    .addApi(Places.PLACE_DETECTION_API)
-                    .addConnectionCallbacks(GooglePlacesAutocompleteActivity.this)
-                    .addOnConnectionFailedListener(GooglePlacesAutocompleteActivity.this)
-                    .build();
-
             Filter filter = new Filter() {
                 @Override
                 protected FilterResults performFiltering(CharSequence constraint) {
@@ -589,26 +583,24 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                     if (constraint != null) {
                         resultList = mPlaceAPI.getExample(constraint.toString());
 
+                        if(!resultListDesc.isEmpty())
+                        {
+                            resultListDesc.clear();
+                        }
+
                             for(int x  = 0 ; x < resultList.get(0).size(); x ++) {
                                 resultListDesc.add(resultList.get(0).get(x));
                             }
                         for(int x  = 0 ; x < resultList.get(1).size(); x ++) {
                             resultListId.add(resultList.get(1).get(x));
                         }
-                        Places.GeoDataApi.getPlaceById(mGoogleApiClient, resultListId.get(0).toString())
-                                .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                                    @Override
-                                    public void onResult(PlaceBuffer places) {
-                                        if (places.getStatus().isSuccess()) {
-                                            final Place myPlace = places.get(0);
-                                            LatLng queried_location = myPlace.getLatLng();
-                                            Log.v("Latitude is", "" + queried_location.latitude);
-                                            Log.v("Longitude is", "" + queried_location.longitude);
-                                        }
-                                        places.release();
-                                    }
-                                });
-//
+
+//                        for (int y = 0 ; y < resultListId.size(); y++)
+//                        {
+                            list = pl.placeDetail("ChIJbf7h4osSYRARi8SBR0Sh2pI");
+//                        }
+
+                        Log.v("Are we there " , list.toString());
 
                         filterResults.values = resultListDesc;
 
@@ -654,16 +646,14 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                             if (e == null) {
                                 bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
-                                // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
-                                //use this bitmap as you want
                             } else {
-                                // something went wrong
+
                             }
                         }
                     });
 
                 } else {
-                    // Toast.makeText(BaseActivity.this, "objekt jest pusty" , Toast.LENGTH_SHORT).show();
+
 
                 }
             }
@@ -687,25 +677,22 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                             for (int i = 0; i < UserDetails.size(); i++) {
 
                                 ParseObject object = UserDetails.get(i);
-//                                int icon =(int) object.get("TripName");
+
                                 name = (String) object.get("Name");
                                 username = (String) object.get("username");
                                 Motorbike = (String) object.get("Motorbike");
                                 Model = (String) object.get("Model");
                                 Engine = (String) object.get("Engine");
-
                                 UserSince2 = object.getCreatedAt();
                                 UserSince = UserSince2.toString();
                                 UserSince = UserSince.substring(3, 11);
                                 uSince = UserSince + UserSince2.toString().substring(23, 28);
-
 
                                 NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
                                 CircleImageView cv = (CircleImageView) findViewById(R.id.circleUserProfile);
                                 TextView tv = (TextView) findViewById(R.id.usernameDrawer);
                                 tv.setText(username);
-
                                 cv.setImageBitmap(bitmap);
                                 Menu m = navigationView.getMenu();
 
