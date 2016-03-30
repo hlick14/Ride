@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -48,7 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MapsActivity2 extends FragmentActivity implements  OnMapLongClickListener,LocationListener {
+public class MapsActivity2 extends FragmentActivity implements LocationListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     Location location;
@@ -104,10 +103,7 @@ public class MapsActivity2 extends FragmentActivity implements  OnMapLongClickLi
 
         setRoute(orginLoc);
         setRoute(destLoc);
-
         mapLayout = (RelativeLayout) this.findViewById(R.id.mainLayout);
-
-
         context = this.getApplicationContext();
         LocationManager lm = null;
         double latitude = 0.0;
@@ -200,9 +196,6 @@ public class MapsActivity2 extends FragmentActivity implements  OnMapLongClickLi
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             initilizeMap();
-
-            mMap.setOnMapLongClickListener(this);
-
 
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 public void onCameraChange(CameraPosition arg0) {
@@ -306,12 +299,7 @@ public class MapsActivity2 extends FragmentActivity implements  OnMapLongClickLi
  }
 
 
-    @Override
-    public void onMapLongClick(LatLng point) {
 
-
-
-    }
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 

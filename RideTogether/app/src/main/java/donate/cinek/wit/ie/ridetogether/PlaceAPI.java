@@ -26,9 +26,11 @@ public class PlaceAPI {
     private static final String OUT_JSON = "/json";
 
     private static final String API_KEY = "AIzaSyBBPpE3VtlxYiVHj_lkItAwzuEfh7EWWvU";
+    ArrayList<String> resultList = null;
+    ArrayList<String> resultListId = null;
 
     public ArrayList<String> autocomplete (String input) {
-        ArrayList<String> resultList = null;
+
 
         HttpURLConnection conn = null;
         StringBuilder jsonResults = new StringBuilder();
@@ -73,6 +75,12 @@ public class PlaceAPI {
             resultList = new ArrayList<String>(predsJsonArray.length());
             for (int i = 0; i < predsJsonArray.length(); i++) {
                 resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
+                resultListId.add(predsJsonArray.getJSONObject(i).getString("place_id"));
+
+
+
+
+
 
 
             }
@@ -82,4 +90,15 @@ public class PlaceAPI {
 
         return resultList;
     }
+
+    public ArrayList<ArrayList<String>> getExample(String input)
+    {
+        autocomplete(input);
+        ArrayList<ArrayList<String>> ar = null;
+        ar.add(resultList);
+        ar.add(resultListId);
+
+        return ar; //returning two values at once
+    }
+
 }

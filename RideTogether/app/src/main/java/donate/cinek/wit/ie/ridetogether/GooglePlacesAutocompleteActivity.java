@@ -56,38 +56,27 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class GooglePlacesAutocompleteActivity extends AppCompatActivity implements OnItemClickListener, LocationListener {
-
-    String name;
-    String username;
-    String Motorbike;
-    String UserSince;
-    Date UserSince2;
+    String name,Model, Engine,uSince,UserSince,Motorbike,username;
     Bitmap bitmap;
-    String uSince;
-
-    String Model, Engine;
-
+    Date UserSince2;
     private TextView textView, textView2, textView3, textView4;
     Context context;
     public static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
     public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     Location location;
-    double orginLatitude, orginLongitude, destLatitude, destLongtitude,orginLat,orginLong,destLat,destLong;
+    double orginLatitude, orginLongitude, destLatitude, destLongtitude, orginLat, orginLong, destLat, destLong;
     AutoCompleteTextView autocompleteView, autocompleteView2;
     LatLng orginLoc, destLoc, returnOrginLock, returnDestLock;
     Button btn;
     public static final String PREFS_NAME = "RideTogether_Settings";
-
-    SharedPreferences settings,settings2;
-    String olat,olong,dlat,dlong;
-    double finalOriginLat,finalOriginLong,finalDestLat,finalDestLong;
-
-
+    SharedPreferences settings, settings2;
+    String olat, olong, dlat, dlong;
+    double finalOriginLat, finalOriginLong, finalDestLat, finalDestLong;
     private BroadcastReceiver receiver = null;
     private Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
     private boolean gotLocFromAddress;
-    private static double latitude,longitute;
+    private static double latitude, longitute;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,13 +86,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         autocompleteView2 = (AutoCompleteTextView) findViewById(R.id.autocomplete2);
         autocompleteView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.autocomplete_list_item));
         autocompleteView2.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.autocomplete_list_item));
-//        autocompleteView.setFocusable(false);
-//        autocompleteView2.setFocusable(false);
-
         btn = (Button) findViewById(R.id.Finish);
-
-//
-
         getUserData();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -126,9 +109,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
 
                     Intent backToMain = new Intent(GooglePlacesAutocompleteActivity.this, MainActivity.class);
                     startActivity(backToMain);
-                }
-                else    if (menuItem.getTitle() == "Settings") {
-
+                } else if (menuItem.getTitle() == "Settings") {
 
 
                     Intent backToMain = new Intent(GooglePlacesAutocompleteActivity.this, AccountOptions.class);
@@ -141,15 +122,15 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(GooglePlacesAutocompleteActivity.this, "Lat and long form places api" +latitude + longitute +"Orgin lat is : "+finalOriginLat  + "/n/"+
-                        "Orgin long is : "+finalOriginLong  + "/n/"+
-                        "Destination lat is : "+finalDestLat  + "/n/"+
-                        "Destination long is : "+finalDestLong  + "/n/", Toast.LENGTH_LONG).show();
-                Intent startMaps2 = new Intent(GooglePlacesAutocompleteActivity.this,MapsActivity2.class);
-                startMaps2.putExtra("finalOrginLat",finalOriginLat);
-                startMaps2.putExtra("finalOrginLong",finalOriginLong);
-                startMaps2.putExtra("finalDestLat",finalDestLat);
-                startMaps2.putExtra("finalDestLong",finalDestLong);
+                Toast.makeText(GooglePlacesAutocompleteActivity.this, "Lat and long form places api" + latitude + longitute + "Orgin lat is : " + finalOriginLat + "/n/" +
+                        "Orgin long is : " + finalOriginLong + "/n/" +
+                        "Destination lat is : " + finalDestLat + "/n/" +
+                        "Destination long is : " + finalDestLong + "/n/", Toast.LENGTH_LONG).show();
+                Intent startMaps2 = new Intent(GooglePlacesAutocompleteActivity.this, MapsActivity2.class);
+                startMaps2.putExtra("finalOrginLat", finalOriginLat);
+                startMaps2.putExtra("finalOrginLong", finalOriginLong);
+                startMaps2.putExtra("finalDestLat", finalDestLat);
+                startMaps2.putExtra("finalDestLong", finalDestLong);
                 startActivity(startMaps2);
             }
         });
@@ -189,218 +170,227 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-            if(prefs!=null) {
-                 olat = prefs.getString("orginLat", null);
-                 olong = prefs.getString("orginLong", null);
-                if(olat!=null)
+        if (prefs != null) {
+            olat = prefs.getString("orginLat", null);
+            olong = prefs.getString("orginLong", null);
+            if (olat != null) {
+                finalOriginLat = Double.parseDouble(olat);
+                finalOriginLong = Double.parseDouble(olong);
+            }
+            Log.d("sharedPref:", "1. When firstly getting orging " + "/n" + "Getting string Value of orgin lat " + olat + "value of orging long" + olong);
+            dlat = prefs.getString("destLat", null);
+            dlong = prefs.getString("destLong", null);
+            if (dlat != null) {
+                finalDestLat = Double.parseDouble(dlat);
+                finalDestLong = Double.parseDouble(dlong);
+            }
+
+
+            Log.d("sharedPref:", "2. When firstly getting destination " + "/n" + "Getting string Value of destin lat " + dlat + "value of destin long" + dlong);
+        }
+        try {
+            Bundle extras = getIntent().getExtras();
+            if (!extras.isEmpty()) {
+
+                orginLoc = (LatLng) extras.get("orgLatLong");
+                if (orginLoc != null) {
+                    String originLocLat = String.valueOf(orginLoc.latitude);
+                    finalOriginLat = Double.parseDouble(originLocLat);
+                    String orginLocLong = String.valueOf(orginLoc.longitude);
+                    finalOriginLong = Double.parseDouble(orginLocLong);
+                }
+                destLoc = (LatLng) extras.get("destLatLong");
+                if (destLoc != null) {
+                    String destLocLat = String.valueOf(destLoc.latitude);
+                    finalDestLat = Double.parseDouble(destLocLat);
+                    String destLocLong = String.valueOf(destLoc.longitude);
+                    finalDestLong = Double.parseDouble(destLocLong);
+                }
+
+                if (orginLoc != null) {
+                    autocompleteView.setText("Point on Map");
+                }
+                if (olat.length() > 0) {
+                    autocompleteView.setText("Point on Map");
+                } else if (destLoc != null) {
+
+                    autocompleteView2.setText("Point on Map");
+
+                }
+                if (dlat.length() > 0) {
+                    autocompleteView2.setText("Point on Map");
+                }
+
+
+            }
+        } catch (Exception e) {
+            Log.d("RideTogether", "Extras are empty");
+
+        }
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        textView = (TextView) findViewById(R.id.YourLoc);
+        textView2 = (TextView) findViewById(R.id.ChoosePoint);
+        textView3 = (TextView) findViewById(R.id.YourLoc2);
+        textView4 = (TextView) findViewById(R.id.ChoosePoint2);
+
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append("").append(" ");
+        builder.setSpan(new ImageSpan(this, R.drawable.ic_my_location_white_24dp),
+                builder.length() - 1, builder.length(), 0);
+        builder.append(" Your Location");
+
+        textView.setText(builder);
+        textView3.setText(builder);
+        LocationListener ls = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        final LocationListener finalLs = ls;
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 {
-                    finalOriginLat = Double.parseDouble(olat);
-                    finalOriginLong = Double.parseDouble(olong);
-                }
-                Log.d("sharedPref:", "1. When firstly getting orging " + "/n"+"Getting string Value of orgin lat " + olat + "value of orging long"+ olong);
-                 dlat = prefs.getString("destLat", null);
-                 dlong = prefs.getString("destLong", null);
-                if(dlat!=null)
-                {
-                    finalDestLat = Double.parseDouble(dlat);
-                    finalDestLong = Double.parseDouble(dlong);
-                }
+                    context = getApplicationContext();
+                    LocationManager lm = null;
+                    orginLatitude = 0.0;
+                    orginLongitude = 0.0;
+                    boolean gps_enabled = false, network_enabled = false;
+                    if (lm == null)
+                        lm = (LocationManager) GooglePlacesAutocompleteActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                    try {
 
-
-                Log.d("sharedPref:", "2. When firstly getting destination " + "/n"+"Getting string Value of destin lat " + dlat + "value of destin long"+ dlong);
-            }
-            try {
-                Bundle extras = getIntent().getExtras();
-                if(!extras.isEmpty()) {
-
-                    orginLoc = (LatLng) extras.get("orgLatLong");
-                    if(orginLoc!=null) {
-                        String originLocLat = String.valueOf(orginLoc.latitude);
-                        finalOriginLat = Double.parseDouble(originLocLat);
-                        String orginLocLong = String.valueOf(orginLoc.longitude);
-                        finalOriginLong = Double.parseDouble(orginLocLong);
+                        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    } catch (Exception ex) {
                     }
-                    destLoc = (LatLng) extras.get("destLatLong");
-                    if(destLoc!=null) {
-                        String destLocLat = String.valueOf(destLoc.latitude);
-                        finalDestLat = Double.parseDouble(destLocLat);
-                        String destLocLong = String.valueOf(destLoc.longitude);
-                        finalDestLong = Double.parseDouble(destLocLong);
+                    try {
+                        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                    } catch (Exception ex) {
                     }
 
-                    if(orginLoc!=null ) {
-                        autocompleteView.setText("Point on Map");
-                    }
-                    if(olat.length()>0)
-                    {
-                        autocompleteView.setText("Point on Map");
-                    }
-                    else if (destLoc!=null )
-                    {
-
-                        autocompleteView2.setText("Point on Map");
+                    if (!gps_enabled) {
+                        showAlert();
 
                     }
-                    if(dlat.length()>0)
-                    {
-                        autocompleteView2.setText("Point on Map");
-                    }
-//                    else if ((orginLoc!=null && destLoc!=null)||dlat.length()>0||olat.length()>0) {
-//                        autocompleteView.setText("Point on Map");
-//                        autocompleteView2.setText("Point on Map");
-//
-//                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Log.d("RideTogether", "Extras are empty");
 
-            }
 
-            mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-            textView = (TextView) findViewById(R.id.YourLoc);
-            textView2 = (TextView) findViewById(R.id.ChoosePoint);
-            textView3 = (TextView) findViewById(R.id.YourLoc2);
-            textView4 = (TextView) findViewById(R.id.ChoosePoint2);
-
-            SpannableStringBuilder builder = new SpannableStringBuilder();
-            builder.append("").append(" ");
-            builder.setSpan(new ImageSpan(this, R.drawable.ic_my_location_white_24dp),
-                    builder.length() - 1, builder.length(), 0);
-            builder.append(" Your Location");
-
-            textView.setText(builder);
-            textView3.setText(builder);
-            LocationListener ls = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            };
-            final LocationListener finalLs = ls;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    {
-                        context = getApplicationContext();
-                        LocationManager lm = null;
-                        orginLatitude = 0.0;
-                        orginLongitude = 0.0;
-                        boolean gps_enabled = false, network_enabled = false;
-                        if (lm == null)
-                            lm = (LocationManager) GooglePlacesAutocompleteActivity.this.getSystemService(Context.LOCATION_SERVICE);
-                        try {
-
-                            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                        } catch (Exception ex) {
+                    if (network_enabled) {
+                        lm.requestLocationUpdates(
+                                LocationManager.NETWORK_PROVIDER,
+                                MIN_TIME_BW_UPDATES,
+                                MIN_DISTANCE_CHANGE_FOR_UPDATES, finalLs);
+                        Log.d("RideTogether", "Network based location Enabled");
+                        if (lm != null) {
+                            location = lm
+                                    .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                            if (location != null) {
+                                orginLatitude = location.getLatitude();
+                                orginLongitude = location.getLongitude();
+                                finalOriginLat = orginLatitude;
+                                finalOriginLat = orginLongitude;
+                            }
                         }
-                        try {
-                            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-                        } catch (Exception ex) {
-                        }
-
-                        if (!gps_enabled) {
-                            showAlert();
-
-                        }
-
-
-                        if (network_enabled) {
+                    }
+                    // if GPS Enabled get lat/long using GPS Services
+                    if (gps_enabled) {
+                        if (location == null) {
                             lm.requestLocationUpdates(
-                                    LocationManager.NETWORK_PROVIDER,
+                                    LocationManager.GPS_PROVIDER,
                                     MIN_TIME_BW_UPDATES,
                                     MIN_DISTANCE_CHANGE_FOR_UPDATES, finalLs);
-                            Log.d("RideTogether", "Network based location Enabled");
+                            Log.d("GPS", "GPS Enabled");
                             if (lm != null) {
                                 location = lm
-                                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                                        .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
                                 if (location != null) {
                                     orginLatitude = location.getLatitude();
                                     orginLongitude = location.getLongitude();
-                                    finalOriginLat=orginLatitude;
-                                    finalOriginLat=orginLongitude;
-                                }
-                            }
-                        }
-                        // if GPS Enabled get lat/long using GPS Services
-                        if (gps_enabled) {
-                            if (location == null) {
-                                lm.requestLocationUpdates(
-                                        LocationManager.GPS_PROVIDER,
-                                        MIN_TIME_BW_UPDATES,
-                                        MIN_DISTANCE_CHANGE_FOR_UPDATES, finalLs);
-                                Log.d("GPS", "GPS Enabled");
-                                if (lm != null) {
-                                    location = lm
-                                            .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                                    if (location != null) {
-                                        orginLatitude = location.getLatitude();
-                                        orginLongitude = location.getLongitude();
-                                        finalOriginLat=orginLatitude;
-                                        finalOriginLat=orginLongitude;
-                                    }
+                                    finalOriginLat = orginLatitude;
+                                    finalOriginLat = orginLongitude;
                                 }
                             }
                         }
                     }
-
-                    autocompleteView.setText("From: Your Location");
-
                 }
-            });
-            textView3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    {
-                        context = getApplicationContext();
-                        LocationManager lm = null;
-                        destLatitude = 0.0;
-                        destLongtitude = 0.0;
-                        boolean gps_enabled = false, network_enabled = false;
-                        if (lm == null)
-                            lm = (LocationManager) GooglePlacesAutocompleteActivity.this.getSystemService(Context.LOCATION_SERVICE);
-                        try {
 
-                            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                        } catch (Exception ex) {
+                autocompleteView.setText("From: Your Location");
+
+            }
+        });
+        textView3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                {
+                    context = getApplicationContext();
+                    LocationManager lm = null;
+                    destLatitude = 0.0;
+                    destLongtitude = 0.0;
+                    boolean gps_enabled = false, network_enabled = false;
+                    if (lm == null)
+                        lm = (LocationManager) GooglePlacesAutocompleteActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                    try {
+
+                        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    } catch (Exception ex) {
+                    }
+                    try {
+                        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                    } catch (Exception ex) {
+                    }
+
+                    if (!gps_enabled) {
+                        showAlert();
+
+                    }
+
+
+                    if (network_enabled) {
+                        lm.requestLocationUpdates(
+                                LocationManager.NETWORK_PROVIDER,
+                                MIN_TIME_BW_UPDATES,
+                                MIN_DISTANCE_CHANGE_FOR_UPDATES, finalLs);
+                        Log.d("RideTogether", "Network based location Enabled");
+                        if (lm != null) {
+                            location = lm
+                                    .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                            if (location != null) {
+                                destLatitude = location.getLatitude();
+                                destLongtitude = location.getLongitude();
+                                finalDestLat = destLatitude;
+                                finalDestLong = destLatitude;
+                            }
                         }
-                        try {
-                            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-                        } catch (Exception ex) {
-                        }
-
-                        if (!gps_enabled) {
-                            showAlert();
-
-                        }
-
-
-                        if (network_enabled) {
+                    }
+                    // if GPS Enabled get lat/long using GPS Services
+                    if (gps_enabled) {
+                        if (location == null) {
                             lm.requestLocationUpdates(
-                                    LocationManager.NETWORK_PROVIDER,
+                                    LocationManager.GPS_PROVIDER,
                                     MIN_TIME_BW_UPDATES,
                                     MIN_DISTANCE_CHANGE_FOR_UPDATES, finalLs);
-                            Log.d("RideTogether", "Network based location Enabled");
+                            Log.d("GPS", "GPS Enabled");
                             if (lm != null) {
                                 location = lm
-                                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                                        .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
                                 if (location != null) {
                                     destLatitude = location.getLatitude();
                                     destLongtitude = location.getLongitude();
@@ -409,53 +399,33 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                                 }
                             }
                         }
-                        // if GPS Enabled get lat/long using GPS Services
-                        if (gps_enabled) {
-                            if (location == null) {
-                                lm.requestLocationUpdates(
-                                        LocationManager.GPS_PROVIDER,
-                                        MIN_TIME_BW_UPDATES,
-                                        MIN_DISTANCE_CHANGE_FOR_UPDATES, finalLs);
-                                Log.d("GPS", "GPS Enabled");
-                                if (lm != null) {
-                                    location = lm
-                                            .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                                    if (location != null) {
-                                        destLatitude = location.getLatitude();
-                                        destLongtitude = location.getLongitude();
-                                        finalDestLat = destLatitude;
-                                        finalDestLong = destLatitude;
-                                    }
-                                }
-                            }
-                        }
                     }
-
-                    autocompleteView2.setText("To: Your Location");
-
                 }
-            });
 
-            SpannableStringBuilder builder2 = new SpannableStringBuilder();
-            builder2.append("").append(" ");
-            builder2.setSpan(new ImageSpan(this, R.drawable.ic_add_location_white_24dp),
-                    0, builder2.length(), 0);
-            builder2.append(" Choose your point on map");
+                autocompleteView2.setText("To: Your Location");
 
-            textView2.setText(builder2);
-            textView4.setText(builder2);
-            textView2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent maps = new Intent(GooglePlacesAutocompleteActivity.this, MapsActivity.class);
-                    maps.putExtra("orgin", true);
-                    String dlat="";
-                    String dlong="";
-                    if (destLoc != null) {
+            }
+        });
 
-                        dlat= String.valueOf(destLoc.latitude);
-                        dlong = String.valueOf(destLoc.longitude);
+        SpannableStringBuilder builder2 = new SpannableStringBuilder();
+        builder2.append("").append(" ");
+        builder2.setSpan(new ImageSpan(this, R.drawable.ic_add_location_white_24dp),
+                0, builder2.length(), 0);
+        builder2.append(" Choose your point on map");
+
+        textView2.setText(builder2);
+        textView4.setText(builder2);
+        textView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent maps = new Intent(GooglePlacesAutocompleteActivity.this, MapsActivity.class);
+                maps.putExtra("orgin", true);
+                String dlat = "";
+                String dlong = "";
+                if (destLoc != null) {
+
+                    dlat = String.valueOf(destLoc.latitude);
+                    dlong = String.valueOf(destLoc.longitude);
 
                     settings2 = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                     SharedPreferences.Editor editor = settings2.edit();
@@ -463,25 +433,25 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                     editor.putString("destLat", dlat);
                     editor.putString("destLong", dlong);
                     editor.commit();
-                    }
-                    startActivity(maps);
-
-
-                    startActivity(maps);
-
                 }
-            });
-            textView4.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent maps = new Intent(GooglePlacesAutocompleteActivity.this, MapsActivity.class);
-                    maps.putExtra("orgin", false);
-                    String olat="";
-                    String olong="";
+                startActivity(maps);
+
+
+                startActivity(maps);
+
+            }
+        });
+        textView4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent maps = new Intent(GooglePlacesAutocompleteActivity.this, MapsActivity.class);
+                maps.putExtra("orgin", false);
+                String olat = "";
+                String olong = "";
                 if (orginLoc != null) {
 
-                     olat= String.valueOf(orginLoc.latitude);
-                     olong = String.valueOf(orginLoc.longitude);
+                    olat = String.valueOf(orginLoc.latitude);
+                    olong = String.valueOf(orginLoc.longitude);
 
                     settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                     SharedPreferences.Editor editor = settings.edit();
@@ -490,10 +460,10 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                     editor.putString("orginLong", olong);
                     editor.commit();
                 }
-                    startActivity(maps);
+                startActivity(maps);
 
-                }
-            });
+            }
+        });
 
     }
 
@@ -503,6 +473,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         super.onBackPressed();
         this.finish();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -556,6 +527,8 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
 
         PlaceAPI mPlaceAPI = new PlaceAPI();
 
+
+
         public PlacesAutoCompleteAdapter(Context context, int resource) {
             super(context, resource);
 
@@ -566,12 +539,12 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         @Override
         public int getCount() {
             // Last item will be the footer
+
             return resultList.size();
         }
 
         @Override
         public String getItem(int position) {
-
             return resultList.get(position);
         }
 
@@ -582,12 +555,14 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                 protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
-                        resultList = mPlaceAPI.autocomplete(constraint.toString());
+                        resultList = mPlaceAPI.getExample(constraint.toString());
+
 
                         filterResults.values = resultList;
 
                         filterResults.count = resultList.size();
                     }
+
 
                     return filterResults;
                 }
@@ -595,7 +570,6 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                 @Override
                 protected void publishResults(CharSequence constraint, FilterResults results) {
                     if (results != null && results.count > 0) {
-
                         notifyDataSetChanged();
 
                     } else {
@@ -606,8 +580,9 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
 
             return filter;
         }
-    }
 
+
+    }
 
 
     public void getUserData() {

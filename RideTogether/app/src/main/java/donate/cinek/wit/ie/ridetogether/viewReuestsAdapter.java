@@ -76,12 +76,16 @@ public class viewReuestsAdapter extends ArrayAdapter<String> {
                 ParseObject requestedFriend = new ParseObject("Friends");
                 requestedFriend.put("User", currentUser);
                 requestedFriend.put("FriendsUsername", k);
-                requestedFriend.put("User", k);
-                requestedFriend.put("FriendsUsername", currentUser);
+
+                ParseObject requestedFriend2 = new ParseObject("Friends");
+
+                requestedFriend2.put("User", k);
+                requestedFriend2.put("FriendsUsername", currentUser);
 
 //
                 try {
                     requestedFriend.save();
+                    requestedFriend2.save();
                 } catch (ParseException e1) {
                     e1.printStackTrace();
                 }

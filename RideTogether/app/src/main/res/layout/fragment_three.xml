@@ -19,7 +19,7 @@
         android:layout_alignParentRight="true"
         app:borderWidth="0dp"
         app:elevation="2dp"
-
+        app:backgroundTint="@color/colorPrimary"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin2"
         android:src="@drawable/ic_add_white_24dp" />
