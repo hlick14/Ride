@@ -38,6 +38,12 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -54,8 +60,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
-public class GooglePlacesAutocompleteActivity extends AppCompatActivity implements OnItemClickListener, LocationListener {
+public class GooglePlacesAutocompleteActivity extends AppCompatActivity implements OnItemClickListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     String name,Model, Engine,uSince,UserSince,Motorbike,username;
     Bitmap bitmap;
     Date UserSince2;
@@ -77,6 +82,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
     private DrawerLayout mDrawerLayout;
     private boolean gotLocFromAddress;
     private static double latitude, longitute;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -517,10 +523,28 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
 
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
 
     class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 
-        ArrayList<String> resultList;
+        ArrayList<ArrayList<String>> resultList;
+        ArrayList<String> resultListDesc = new ArrayList<>();
+        ArrayList<String> resultListId = new ArrayList<>();
+
 
         Context mContext;
         int mResource;
@@ -540,16 +564,24 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         public int getCount() {
             // Last item will be the footer
 
-            return resultList.size();
+            return resultListDesc.size();
         }
 
         @Override
         public String getItem(int position) {
-            return resultList.get(position);
+            return resultListDesc.get(position);
         }
 
         @Override
         public Filter getFilter() {
+            mGoogleApiClient = new GoogleApiClient
+                    .Builder(getContext())
+                    .addApi(Places.GEO_DATA_API)
+                    .addApi(Places.PLACE_DETECTION_API)
+                    .addConnectionCallbacks(GooglePlacesAutocompleteActivity.this)
+                    .addOnConnectionFailedListener(GooglePlacesAutocompleteActivity.this)
+                    .build();
+
             Filter filter = new Filter() {
                 @Override
                 protected FilterResults performFiltering(CharSequence constraint) {
@@ -557,10 +589,30 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                     if (constraint != null) {
                         resultList = mPlaceAPI.getExample(constraint.toString());
 
+                            for(int x  = 0 ; x < resultList.get(0).size(); x ++) {
+                                resultListDesc.add(resultList.get(0).get(x));
+                            }
+                        for(int x  = 0 ; x < resultList.get(1).size(); x ++) {
+                            resultListId.add(resultList.get(1).get(x));
+                        }
+                        Places.GeoDataApi.getPlaceById(mGoogleApiClient, resultListId.get(0).toString())
+                                .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                                    @Override
+                                    public void onResult(PlaceBuffer places) {
+                                        if (places.getStatus().isSuccess()) {
+                                            final Place myPlace = places.get(0);
+                                            LatLng queried_location = myPlace.getLatLng();
+                                            Log.v("Latitude is", "" + queried_location.latitude);
+                                            Log.v("Longitude is", "" + queried_location.longitude);
+                                        }
+                                        places.release();
+                                    }
+                                });
+//
 
-                        filterResults.values = resultList;
+                        filterResults.values = resultListDesc;
 
-                        filterResults.count = resultList.size();
+                        filterResults.count = resultListDesc.size();
                     }
 
 
