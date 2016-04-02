@@ -169,7 +169,7 @@ public class BikeOfTheDay extends AppCompatActivity  {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new UploadImage(), "UploadImage");
-        adapter.addFragment(new viewRequests(), "ViewRequests");
+//        adapter.addFragment(new viewRequests(), "ViewRequests");
 
 //        viewPager.setCurrentItem(2);
         viewPager.setAdapter(adapter);
@@ -180,10 +180,10 @@ public class BikeOfTheDay extends AppCompatActivity  {
         tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_search_white_24dp, 0, 0);
         tabLayout.getTabAt(0).setCustomView(tabTwo);
 
-        TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.friend_custom_tab, null);
-        tabOne.setText("View Friend Requests");
-        tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_supervisor_account_white_24dp, 0, 0);
-        tabLayout.getTabAt(1).setCustomView(tabOne);
+//        TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.friend_custom_tab, null);
+//        tabOne.setText("View Friend Requests");
+//        tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_supervisor_account_white_24dp, 0, 0);
+//        tabLayout.getTabAt(1).setCustomView(tabOne);
 
 
 
