@@ -213,6 +213,8 @@ public class OneFragment extends android.support.v4.app.Fragment {
 
     public void setTripAdapter()
     {
+
+
         SoloTripAdapter adapter = new SoloTripAdapter(getActivity(),
                 R.layout.listview_item_row, hujumuniu);
 

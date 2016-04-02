@@ -36,7 +36,6 @@ import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -79,8 +78,8 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
     private boolean gotLocFromAddress;
     private static double latitude, longitute;
     private GoogleApiClient mGoogleApiClient;
-    ArrayList<Double> list = new ArrayList<Double>();
-    int positionHolder = 0;
+    ArrayList<Double> list ;
+    int positionHolder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,10 +125,10 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(GooglePlacesAutocompleteActivity.this, "Lat and long form places api" + latitude + longitute + "Orgin lat is : " + finalOriginLat + "/n/" +
-                        "Orgin long is : " + finalOriginLong + "/n/" +
-                        "Destination lat is : " + finalDestLat + "/n/" +
-                        "Destination long is : " + finalDestLong + "/n/", Toast.LENGTH_LONG).show();
+//                Toast.makeText(GooglePlacesAutocompleteActivity.this, "Lat and long form places api" + latitude + longitute + "Orgin lat is : " + finalOriginLat + "/n/" +
+//                        "Orgin long is : " + finalOriginLong + "/n/" +
+//                        "Destination lat is : " + finalDestLat + "/n/" +
+//                        "Destination long is : " + finalDestLong + "/n/", Toast.LENGTH_LONG).show();
                 Intent startMaps2 = new Intent(GooglePlacesAutocompleteActivity.this, MapsActivity2.class);
                 startMaps2.putExtra("finalOrginLat", finalOriginLat);
                 startMaps2.putExtra("finalOrginLong", finalOriginLong);
@@ -165,7 +164,6 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String description = (String) parent.getItemAtPosition(position);
-        Toast.makeText(this, description, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -186,6 +184,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
             dlong = prefs.getString("destLong", null);
             if (dlat != null) {
                 finalDestLat = Double.parseDouble(dlat);
+
                 finalDestLong = Double.parseDouble(dlong);
             }
 
@@ -308,7 +307,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                                 orginLatitude = location.getLatitude();
                                 orginLongitude = location.getLongitude();
                                 finalOriginLat = orginLatitude;
-                                finalOriginLat = orginLongitude;
+                                finalOriginLong = orginLongitude;
                             }
                         }
                     }
@@ -328,7 +327,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                                     orginLatitude = location.getLatitude();
                                     orginLongitude = location.getLongitude();
                                     finalOriginLat = orginLatitude;
-                                    finalOriginLat = orginLongitude;
+                                    finalOriginLong = orginLongitude;
                                 }
                             }
                         }
@@ -379,7 +378,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                                 destLatitude = location.getLatitude();
                                 destLongtitude = location.getLongitude();
                                 finalDestLat = destLatitude;
-                                finalDestLong = destLatitude;
+                                finalDestLong = destLongtitude;
                             }
                         }
                     }
@@ -399,7 +398,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                                     destLatitude = location.getLatitude();
                                     destLongtitude = location.getLongitude();
                                     finalDestLat = destLatitude;
-                                    finalDestLong = destLatitude;
+                                    finalDestLong = destLongtitude;
                                 }
                             }
                         }
@@ -544,6 +543,8 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         ArrayList<String> resultListId = new ArrayList<>();
 
 
+        ArrayList<Double> list;
+
         Context mContext;
         int mResource;
 
@@ -570,7 +571,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
             //call getlatlong method here with postion
 
 
-
+            positionHolder = position;
             return resultListDesc.get(position);
         }
 
@@ -581,33 +582,43 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                 protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
-                        resultList = mPlaceAPI.getExample(constraint.toString());
+                        resultList = mPlaceAPI.getAll(constraint.toString());
 
                         if(!resultListDesc.isEmpty())
                         {
                             resultListDesc.clear();
                         }
+                        if(!constraint.equals("From: Your Location") && !constraint.equals("To: Your Location") ) {
 
-                            for(int x  = 0 ; x < resultList.get(0).size(); x ++) {
+                            for (int x = 0; x < resultList.get(0).size(); x++) {
                                 resultListDesc.add(resultList.get(0).get(x));
                             }
-                        for(int x  = 0 ; x < resultList.get(1).size(); x ++) {
-                            resultListId.add(resultList.get(1).get(x));
+                            for (int x = 0; x < resultList.get(1).size(); x++) {
+                                resultListId.add(resultList.get(1).get(x));
+                            }
+
+                            if (positionHolder <= 0) {
+                                list = pl.placeDetail(resultListId.get(positionHolder));
+                            }
+                        }
+                        if(list != null) {
+                            if (list.size() == 2) {
+                                finalOriginLat = list.get(1);
+                                finalOriginLong = list.get(0);
+                            } else if (list.size() > 2) {
+//                            finalDestLat = list.get(2);
+//                            finalDestLong = list.get(3);
+                            }
+
                         }
 
-//                        for (int y = 0 ; y < resultListId.size(); y++)
-//                        {
-                            list = pl.placeDetail("ChIJbf7h4osSYRARi8SBR0Sh2pI");
-//                        }
-
-                        Log.v("Are we there " , list.toString());
 
                         filterResults.values = resultListDesc;
 
                         filterResults.count = resultListDesc.size();
                     }
 
-
+                    //set postion holder to blank again
                     return filterResults;
                 }
 

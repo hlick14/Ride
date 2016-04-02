@@ -268,10 +268,12 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
      }
      markerPoints.add(point);
 
+
      options = new MarkerOptions();
 
      // Setting the position of the marker
      options.position(point);
+     mMap.addMarker(options);
 
      /**
       * For the start location, the color of marker is GREEN and
@@ -433,7 +435,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
                 DirectionsJSONParser parser = new DirectionsJSONParser();
 
                 // Starts parsing data
-                Log.d("RideTogether: ",routes.toString());
+
                 routes = parser.parse(jObject);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -449,10 +451,6 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
             MarkerOptions markerOptions = new MarkerOptions();
 
 
-            if (result.size() < 1) {
-                Toast.makeText(getBaseContext(), "No Points", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
             // Traversing through all the routes
             for (int i = 0; i < result.size(); i++) {
@@ -486,16 +484,36 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
                 }
 
                 // Adding all the points in the route to LineOptions
-                lineOptions.addAll(points);
                 lineOptions.width(2);
                 lineOptions.color(Color.RED);
+                lineOptions.visible(true);
+                lineOptions.addAll(points);
+
             }
 //            LatLngBounds.Builder builder = new LatLngBounds.Builder();
 //            builder.include(orginLoc);
 //            builder.include(destLoc);
 //            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 12));
             mMap.addPolyline(lineOptions);
+            if(distance.length()>0) {
+                Snackbar.make(findViewById(R.id.mainLayout), "Distance: " + distance + " Duration: " + duration, Snackbar.LENGTH_INDEFINITE).setAction("Confirm", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
+                        Intent UserTrips = new Intent(MapsActivity2.this, TripInfo.class);
+                        UserTrips.putExtra("mapDetails", addressToSend);
+                        UserTrips.putExtra("mapDetails2", addressToSend2);
+                        UserTrips.putExtra("originLat", origin.latitude);
+                        UserTrips.putExtra("originLong", origin.longitude);
+                        UserTrips.putExtra("destLat", dest.latitude);
+                        UserTrips.putExtra("destLong", dest.longitude);
+                        UserTrips.putExtra("distance", distance);
+                        UserTrips.putExtra("duration", duration);
+                        startActivity(UserTrips);
+                    }
+
+                }).show();
+            }
 
             captureScreen();
         }
@@ -567,30 +585,14 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
                 mMap.setPadding(0, 160, 0, 60);
 
 
-                Snackbar.make(findViewById(R.id.mainLayout), "Distance: " + distance + " Duration: " + duration, Snackbar.LENGTH_INDEFINITE).setAction("Confirm", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
 
-                        Intent UserTrips = new Intent(MapsActivity2.this, TripInfo.class);
-                        UserTrips.putExtra("mapDetails", addressToSend);
-                        UserTrips.putExtra("mapDetails2", addressToSend2);
-                        UserTrips.putExtra("originLat", origin.latitude);
-                        UserTrips.putExtra("originLong", origin.longitude);
-                        UserTrips.putExtra("destLat", dest.latitude);
-                        UserTrips.putExtra("destLong", dest.longitude);
-                        UserTrips.putExtra("distance", distance);
-                        UserTrips.putExtra("duration", duration);
-                        startActivity(UserTrips);
-                    }
-
-                }).show();
 
 
 
 
             }
             // Placing a marker on the touched position
-            mMap.addMarker(options);
+
 
 
 
@@ -629,7 +631,6 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
 
                 }
 
-                //Toast.makeText(MapsActivity.this, bmOverlay.getHeight(),Toast.LENGTH_SHORT).show();
             }
         };
 

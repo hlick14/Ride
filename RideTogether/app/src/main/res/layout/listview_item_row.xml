@@ -37,7 +37,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Starting City"
                 android:id="@+id/txtStartCity"
-                android:layout_alignBottom="@+id/mapImage"
+                android:layout_below="@+id/txtTitle"
                 android:layout_toEndOf="@+id/mapImage" />
 
             <TextView
@@ -46,8 +46,27 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="End City"
                 android:id="@+id/txtEndCity"
-                android:layout_alignBottom="@+id/mapImage"
-                android:layout_toRightOf="@+id/txtStartCity" />
+                android:layout_below="@+id/txtStartCity"
+                android:layout_toEndOf="@+id/mapImage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Date"
+                android:id="@+id/txtTripDate"
+                android:layout_below="@+id/txtTripTime"
+                android:layout_toEndOf="@+id/mapImage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Time"
+                android:id="@+id/txtTripTime"
+
+                android:layout_below="@+id/txtEndCity"
+                android:layout_toEndOf="@+id/mapImage" />
 
 
 

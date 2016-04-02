@@ -44,8 +44,8 @@ public class SoloTripAdapter extends ArrayAdapter<SoloTrip> {
             holder.txtTitle = (TextView)row.findViewById(R.id.txtTitle);
             holder.txtStartCity =(TextView)row.findViewById(R.id.txtStartCity);
             holder.txtEndCity =(TextView)row.findViewById(R.id.txtEndCity);
-//            holder.txtDate =(TextView)row.findViewById(R.id.txtDate);
-//            holder.txtTime =(TextView)row.findViewById(R.id.txtTime);
+            holder.txtDate =(TextView)row.findViewById(R.id.txtTripDate);
+            holder.txtTime =(TextView)row.findViewById(R.id.txtTripTime);
 
 
             row.setTag(holder);
@@ -56,12 +56,26 @@ public class SoloTripAdapter extends ArrayAdapter<SoloTrip> {
         }
 
         //SoloTrip sTrip = costam[position];
+
+        String time = k.getTripTime();
+        int hour,minute;
+        if (time.length() == 3) {
+             hour = Integer.valueOf(time.substring(0, 1));
+             minute = Integer.valueOf(time.substring(1, time.length()));
+        }
+        else
+        {
+             hour = Integer.valueOf(time.substring(0, 2));
+             minute = Integer.valueOf(time.substring(2, time.length()));
+        }
+
+
         holder.txtTitle.setText(k.getTitle());
         holder.imgIcon.setImageBitmap(k.getIcon());
-        holder.txtStartCity.setText("Start "+"\n"+k.getStartCity()+ "  ");
-        holder.txtEndCity.setText("End "+"\n"+k.getEndCity()+ "  ");
-//        holder.txtDate.setText("Date "+"\n"+k.getTripDate());
-//        holder.txtTime.setText("Time "+"\n"+k.getTripTime());
+        holder.txtStartCity.setText("Start In: " + k.getStartCity() + "  ");
+        holder.txtEndCity.setText("End In:  " + k.getEndCity() + "  ");
+        holder.txtDate.setText("Date: "+k.getTripDate());
+        holder.txtTime.setText("Time: "+hour + ":" + minute);
 
         return row;
     }

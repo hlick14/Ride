@@ -1,7 +1,5 @@
 package donate.cinek.wit.ie.ridetogether;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,14 +64,10 @@ public class PlacesIdDetails {
 
             JSONObject jsonObj = new JSONObject(jsonResults.toString());
             JSONObject result = jsonObj.getJSONObject("result").getJSONObject("geometry").getJSONObject("location");
-
-            Double longitude  = result.getDouble("lng");
-            Double latitude =  result.getDouble("lat");
-            Log.v("LatLong", longitude + "long" + " " + latitude + "latitute");
             resultList = new ArrayList<Double>(result.length());
             resultList.add(result.getDouble("lng"));
             resultList.add(result.getDouble("lat"));
-            System.out.println("les latitude dans le table"+resultList);
+
 
         } catch (JSONException e) {
 

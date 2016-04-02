@@ -464,7 +464,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
 
                         } else {
                             // whatever is appropriate in this case
-                            throw new IllegalArgumentException("word has less than characters then required!");
+                            throw new IllegalArgumentException("word has less  characters then required!");
                         }
                         int dayOfmonthTemp = tDate.indexOf("-");
                         int monthTemp = tDate.lastIndexOf("-");

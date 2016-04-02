@@ -1,15 +1,13 @@
 package donate.cinek.wit.ie.ridetogether;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -17,14 +15,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.view.Gravity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +41,19 @@ import java.util.Date;
 import java.util.List;
 
 
-public class Options extends BaseActivity {
+/**
+ * Created by Kuba Pieczonka on 02/04/2016.
+ */
+public class BikeOfTheDay extends AppCompatActivity  {
+
+    Button friendSearch;
+    private ArrayAdapter<String> namesArrayAdapter;
+    private ListView usersListView;
+    ProgressDialog progressDialog;
+    TextView time, date,FoundRequestedUsers;
+    TextInputLayout update;
+    private ArrayList<String> listOfUsernames;
+    String name;
 
     protected ImageButton account;
     private DrawerLayout mDrawerLayout;
@@ -56,7 +67,7 @@ public class Options extends BaseActivity {
             R.drawable.home
 
     };
-    String name;
+    String Dname;
     String username;
     String Motorbike;
     String UserSince;
@@ -72,54 +83,26 @@ public class Options extends BaseActivity {
     public List<ParseObject> tempObjectHolder = new ArrayList<>();
     String tName, tDate, tTime;
     int t = 0;
-    public static final String PREFS_NAME = "RideTogether_Settings";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_options2);
+        setContentView(R.layout.activity_bike_of_the_day);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        prefs.edit().clear().commit();
-
-        try {
-            Bundle extras = getIntent().getExtras();
-            if(!extras.isEmpty()) {
-                hot_number = extras.getInt("requests");
-            }
-        }
-        catch (Exception e)
-        {
-
-        }
-
-
 
 
         getUserData();
 
-
-        toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpagerBikeOfTheDay);
 
         setupViewPager(viewPager);
 
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.BikeOfTheDayTabs);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(0);
 
         setupTabIcons();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
 
@@ -132,71 +115,40 @@ public class Options extends BaseActivity {
                     //Turn of the service from sinch
 
                     ParseUser.logOut();
-                    Intent backToMain = new Intent(Options.this, MainActivity.class);
+                    Intent backToMain = new Intent(BikeOfTheDay.this, MainActivity.class);
                     startActivity(backToMain);
                 }
                 else    if (menuItem.getTitle() == "Settings") {
 
 
 
-                    Intent backToMain = new Intent(Options.this, AccountOptions.class);
+                    Intent backToMain = new Intent(BikeOfTheDay.this, AccountOptions.class);
                     startActivity(backToMain);
                 }
                 return true;
             }
         });
 
-    }
 
-
-
-private void setupTabIcons() {
-        TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabTwo.setText("Profile");
-        tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.home, 0, 0);
-        tabLayout.getTabAt(1).setCustomView(tabTwo);
-
-        TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabOne.setText("Solo Rides");
-        tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.solo, 0, 0);
-        tabLayout.getTabAt(0).setCustomView(tabOne);
-
-
-        TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabThree.setText("Group Rides");
-        tabThree.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.group, 0, 0);
-        tabLayout.getTabAt(2).setCustomView(tabThree);
+        getListOfUsers();
+        toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
     }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_options, menu);
-
-        final View menu_hotlist = menu.findItem(R.id.change_city).getActionView();
-        ui_hot = (TextView) menu_hotlist.findViewById(R.id.notificationTextView);
-//        hot_number = numOfReuests;
-        updateHotCount(hot_number);
-        new MyMenuItemStuffListener(menu_hotlist, "Show hot message") {
-            @Override
-            public void onClick(View v) {
-                final Intent addFriendIntent = new Intent(getApplicationContext(), addFriend.class);
-
-                startActivity(addFriendIntent);
-
-
-            }
-        };
-
-        return super.onCreateOptionsMenu(menu);
-
-    }
-
-
+    //    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.menu_options, menu);
+//
+//        return super.onCreateOptionsMenu(menu);
+//
+//    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -209,62 +161,35 @@ private void setupTabIcons() {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
-            case R.id.chat:
-                final Intent intent = new Intent(getApplicationContext(), ListUsersActivity.class);
-                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
-                startActivity(intent);
-                startService(serviceIntent);
-                return true;
-            case R.id.change_city:
-
-                final Intent addFriendIntent = new Intent(getApplicationContext(), addFriend.class);
-
-                startActivity(addFriendIntent);
-                return true;
-            case R.id.events:
-
-                return true;
-            case R.id.BikeOfTheDay:
-                final Intent BikeOfTheDayIntent = new Intent(getApplicationContext(), BikeOfTheDay.class);
-
-                startActivity(BikeOfTheDayIntent);
-                return true;
-
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-
-
-    public void changeCity(String city) {
-
-        TwoFragment wf = (TwoFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_two);
-
-        wf.changeCity(city);
-        new CityPreference(this).setCity(city);
-    }
-
-    //set();
-    @Override
-    public void onBackPressed() {
-        Intent backToMain = new Intent(Options.this, MainActivity.class);
-        ParseUser.logOut();
-
-        startActivity(backToMain);
-
-    }
-
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OneFragment(), "ONE");
-        adapter.addFragment(new TwoFragment(), "TWO");
-        adapter.addFragment(new ThreeFragment(), "THREE");
+        adapter.addFragment(new UploadImage(), "UploadImage");
+        adapter.addFragment(new viewRequests(), "ViewRequests");
+
 //        viewPager.setCurrentItem(2);
         viewPager.setAdapter(adapter);
     }
+    private void setupTabIcons() {
+        TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.friend_custom_tab, null);
+        tabTwo.setText("Upload Your Motorbike Photo");
+        tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_search_white_24dp, 0, 0);
+        tabLayout.getTabAt(0).setCustomView(tabTwo);
+
+        TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.friend_custom_tab, null);
+        tabOne.setText("View Friend Requests");
+        tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_supervisor_account_white_24dp, 0, 0);
+        tabLayout.getTabAt(1).setCustomView(tabOne);
 
 
+
+
+
+    }
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
@@ -293,7 +218,37 @@ private void setupTabIcons() {
             return mFragmentTitleList.get(position);
         }
     }
+    private void getListOfUsers() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading");
+        progressDialog.setMessage("Please wait...");
+        progressDialog.show();
+        listOfUsernames = new ArrayList<String>();
 
+
+        String currentUser = ParseUser.getCurrentUser().getUsername();
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereNotEqualTo("username", currentUser);
+
+        query.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); i++) {
+
+                        listOfUsernames.add(objects.get(i).get("username").toString());
+                    }
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                } else {
+                    Toast.makeText(BikeOfTheDay.this, "Could not load the list of users", Toast.LENGTH_SHORT).show();
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                }
+            }
+        });
+    }
     public void getUserData() {
         String currentUser = ParseUser.getCurrentUser().getUsername();
         ParseUser currentUser2 = ParseUser.getCurrentUser();
@@ -313,14 +268,14 @@ private void setupTabIcons() {
                                 // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
                                 //use this bitmap as you want
                             } else {
-                                Toast.makeText(Options.this, "Error Loading Data From Our Servers - Image Problem", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(BikeOfTheDay.this, "Error Loading Data From Our Servers - Image Problem", Toast.LENGTH_SHORT).show();
 
                             }
                         }
                     });
 
                 } else {
-                    Toast.makeText(Options.this, "Error Loading Data From Our Servers - User Problem", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BikeOfTheDay.this, "Error Loading Data From Our Servers - User Problem", Toast.LENGTH_SHORT).show();
 
                 }
             }
@@ -346,7 +301,7 @@ private void setupTabIcons() {
                             for (int i = 0; i < UserDetails.size(); i++) {
 
                                 ParseObject object = UserDetails.get(i);
-                                name = (String) object.get("Name");
+                                Dname = (String) object.get("Name");
                                 username = (String) object.get("username");
                                 Motorbike = (String) object.get("Motorbike");
                                 Model = (String) object.get("Model");
@@ -395,7 +350,7 @@ private void setupTabIcons() {
 
 
                         } else {
-                            Toast.makeText(Options.this, "Error Finding User Details", Toast.LENGTH_SHORT);
+                            Toast.makeText(BikeOfTheDay.this, "Error Finding User Details", Toast.LENGTH_SHORT);
                         }
                     }
                 });
@@ -407,58 +362,5 @@ private void setupTabIcons() {
 
     }
 
-    public void updateHotCount(final int new_hot_number) {
-        hot_number = new_hot_number;
-        if (ui_hot == null) return;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (new_hot_number == 0)
-                    ui_hot.setVisibility(View.INVISIBLE);
-                else {
-                    ui_hot.setVisibility(View.VISIBLE);
-                    ui_hot.setText(Integer.toString(new_hot_number));
-                }
-            }
-        });
-    }
-    static abstract class MyMenuItemStuffListener implements View.OnClickListener, View.OnLongClickListener {
-        private String hint;
-        private View view;
-
-        MyMenuItemStuffListener(View view, String hint) {
-            this.view = view;
-            this.hint = hint;
-            view.setOnClickListener(this);
-            view.setOnLongClickListener(this);
-        }
-
-        @Override abstract public void onClick(View v);
-
-        @Override public boolean onLongClick(View v) {
-            final int[] screenPos = new int[2];
-            final Rect displayFrame = new Rect();
-            view.getLocationOnScreen(screenPos);
-            view.getWindowVisibleDisplayFrame(displayFrame);
-            final Context context = view.getContext();
-            final int width = view.getWidth();
-            final int height = view.getHeight();
-            final int midy = screenPos[1] + height / 2;
-            final int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
-            Toast cheatSheet = Toast.makeText(context, hint, Toast.LENGTH_SHORT);
-            if (midy < displayFrame.height()) {
-                cheatSheet.setGravity(Gravity.TOP | Gravity.RIGHT,
-                        screenWidth - screenPos[0] - width / 2, height);
-            } else {
-                cheatSheet.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, height);
-            }
-            cheatSheet.show();
-            return true;
-        }
-    }
-
-
 }
-
-
 

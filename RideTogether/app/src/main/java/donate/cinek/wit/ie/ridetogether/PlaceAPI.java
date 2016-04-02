@@ -146,7 +146,7 @@ public class PlaceAPI {
         return resultListId;
     }
 
-    public ArrayList<ArrayList<String>> getExample(String input) {
+    public ArrayList<ArrayList<String>> getAll(String input) {
 
         resultList = autocomplete(input);
         resultListId = autocompleteId(input);
