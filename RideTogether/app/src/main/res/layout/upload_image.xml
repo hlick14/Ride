@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     >
     <Button
         android:layout_width="wrap_content"
@@ -10,23 +14,32 @@
         android:text="Upload"
         android:id="@+id/UploadButton" />
 
-    <ListView
-        android:id="@+id/listView2"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:theme="@style/Material"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        app:borderWidth="0dp"
-        app:elevation="2dp"
-        app:backgroundTint="@color/colorPrimary"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin2"
-        android:src="@drawable/ic_add_white_24dp" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        />
+
+
+
+
+
+
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab"-->
+        <!--android:theme="@style/Material"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--app:borderWidth="0dp"-->
+        <!--app:elevation="2dp"-->
+        <!--app:backgroundTint="@color/colorPrimary"-->
+        <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
+        <!--android:layout_marginBottom="@dimen/activity_vertical_margin2"-->
+        <!--android:src="@drawable/ic_add_white_24dp" />-->
 
 </RelativeLayout>
 

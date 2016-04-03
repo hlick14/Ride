@@ -5,6 +5,7 @@
 
     <color name="colorPrimary">#c4221f</color>
     <color name="colorPrimaryDark">#000000</color>
+    <color name="colorBGCards">#212121</color>
     <color name="colorAccent">#c4221f</color>
     <color name="postive_btn">#c4221f</color>
     <color name="text">#ffffff</color>

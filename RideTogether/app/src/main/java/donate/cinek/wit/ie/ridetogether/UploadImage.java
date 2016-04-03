@@ -2,6 +2,7 @@ package donate.cinek.wit.ie.ridetogether;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +11,9 @@ import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +35,8 @@ import org.cloudinary.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,10 +67,17 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
     String file_path;
     File file;
     Map res = new HashMap();
-    ArrayList<Object> listOfUrls = new ArrayList<>();
-    ArrayList<String> listOfPhotos = new ArrayList<>();
+    ArrayList<String> listOfUrls = new ArrayList<String>();
+    ArrayList<Drawable> listOfPhotos = new ArrayList<>();
+    ListView listViewPics;
+    private static ArrayList<DataModel> data;
 
+    private static RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private static RecyclerView recyclerView;
 
+    static View.OnClickListener myOnClickListener;
+    private static ArrayList<Integer> removedItems;
     public UploadImage() {
         // Required empty public constructor
     }
@@ -77,6 +90,10 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
         config.put("api_key", "948126291598285");
         config.put("api_secret", "a-Hh58yVNi6bXfeBrArVhZ1HD6I");
         cloudinary = new Cloudinary(config);
+
+
+
+
     }
     @Override
     public void onResume() {
@@ -94,6 +111,12 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentView = inflater.inflate(R.layout.upload_image, container, false);
+        recyclerView = (RecyclerView) fragmentView.findViewById(R.id.my_recycler_view);
+        recyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         b= (Button) fragmentView.findViewById(R.id.UploadButton);
         b.setOnClickListener(this);
@@ -106,13 +129,13 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
                 if (links != null) {
                     for (int i = 0; i < links.size();i++)
                     {
-                        listOfUrls.add(links.get(i).get("PictureLink"));
+                        listOfUrls.add(links.get(i).get("PictureLink").toString());
                     }
 
 
                 }
                 Fetch task2 = new Fetch( cloudinary );
-                task2.execute(new String[] { "http://www.vogella.com" });
+                task2.execute();
             }
         });
         return fragmentView;
@@ -150,10 +173,11 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
                 //File to upload to cloudinary
 
                 Upload task = new Upload( cloudinary );
-                task.execute(new String[] { "http://www.vogella.com" });
+                task.execute();
 
         }
     }
+
     private class Upload extends AsyncTask<String, Void, String> {
         private Cloudinary mCloudinary;
 
@@ -201,11 +225,20 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
             String response = "";
 
 
+
             for (int i = 0 ; i < listOfUrls.size() ; i++)
             {
-                listOfPhotos.add(cloudinary.url().type("fetch").format("jpg").imageTag(listOfUrls.get(i).toString()));
+//                listOfPhotos.add(cloudinary.url().type("fetch").format("jpg").imageTag(listOfUrls.get(i).toString()));
+                try {
+                    InputStream is = (InputStream) new URL(listOfUrls.get(i)).getContent();
+                    Drawable d = Drawable.createFromStream(is, "src name");
+                    listOfPhotos.add(i,d);
+                } catch (Exception e) {
+
+                }
 
             }
+
             Log.v("FETCH RETURN " , listOfPhotos.toString());
 
             return response;
@@ -214,7 +247,33 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(getActivity(), "Uploaded"+ res.toString(), Toast.LENGTH_LONG).show();
-            Log.v("UPLOAD", res.toString());
+
+
+//            viewReuestsAdapter adapter = new viewReuestsAdapter(getActivity(),
+//                    R.layout.listview_bike_of_the_day_item_row, listOfPhotos);
+
+
+//            listViewPics = (ListView) getView().findViewById(R.id.listViewPics);
+//
+//
+//
+//            listViewPics.setAdapter(adapter);
+
+            String[] nameArray = {"Cupcake", "Donut"};
+            String[] versionArray = {"1.5", "1.6"};
+            int [] id_ = {1,2};
+            data = new ArrayList<DataModel>();
+            for (int i = 0; i < listOfPhotos.size(); i++) {
+                data.add(new DataModel(
+                        nameArray[i],
+                        versionArray[i],
+                        id_[i],
+                        listOfPhotos.get(i)
+                ));
+            }
+            adapter = new CustomAdapter(data);
+            recyclerView.setAdapter(adapter);
+
         }
     }
 
