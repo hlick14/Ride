@@ -8,30 +8,30 @@ import android.graphics.drawable.Drawable;
 public class DataModel {
 
     String name;
-    String version;
-    int id_;
+//    String version;
+//    int id_;
     Drawable image;
 
-    public DataModel(String name, String version, int id_, Drawable image) {
+    public DataModel(String name,Drawable image) {
         this.name = name;
-        this.version = version;
-        this.id_ = id_;
+//        this.version = version;
+//        this.id_ = id_;
         this.image=image;
     }
 
     public String getName() {
         return name;
     }
-
-    public String getVersion() {
-        return version;
-    }
+//
+//    public String getVersion() {
+//        return version;
+//    }
 
     public Drawable getImage() {
         return image;
     }
-
-    public int getId() {
-        return id_;
-    }
+//
+//    public int getId() {
+//        return id_;
+//    }
 }

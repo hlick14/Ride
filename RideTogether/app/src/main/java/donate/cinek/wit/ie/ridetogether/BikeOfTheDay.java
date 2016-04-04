@@ -176,8 +176,8 @@ public class BikeOfTheDay extends AppCompatActivity  {
     }
     private void setupTabIcons() {
         TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.friend_custom_tab, null);
-        tabTwo.setText("Upload Your Motorbike Photo");
-        tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_search_white_24dp, 0, 0);
+        tabTwo.setText("Bike Of The Day");
+        tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_motorcycle_white_24dp, 0, 0);
         tabLayout.getTabAt(0).setCustomView(tabTwo);
 
 //        TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.friend_custom_tab, null);

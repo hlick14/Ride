@@ -1,28 +1,28 @@
 package donate.cinek.wit.ie.ridetogether;
 
-import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.TabLayout;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.view.ViewPager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -31,9 +31,9 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import org.cloudinary.json.JSONObject;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -48,36 +48,27 @@ import java.util.Map;
 public class UploadImage extends android.support.v4.app.Fragment implements View.OnClickListener {
 
     View fragmentView;
-    Button friendSearch;
-    private ArrayAdapter<String> namesArrayAdapter;
-    private ListView usersListView;
-    ProgressDialog progressDialog;
-    TextView time, date,FoundRequestedUsers;
-    TextInputLayout update;
-    private ArrayList<String> listOfUsernames;
     String name;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private ListView listView1;
-    private String requestedUsername;
-    private Button accept,deny,b;
+
     static final int REQUEST_TAKE_PHOTO = 1;
+    static final int SELECT_PHOTO = 1;
+
     Cloudinary cloudinary;
-    JSONObject Result;
-    String file_path;
     File file;
     Map res = new HashMap();
     ArrayList<String> listOfUrls = new ArrayList<String>();
+    ArrayList<String> listOfDescriptions = new ArrayList<String>();
     ArrayList<Drawable> listOfPhotos = new ArrayList<>();
-    ListView listViewPics;
     private static ArrayList<DataModel> data;
-
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
 
-    static View.OnClickListener myOnClickListener;
-    private static ArrayList<Integer> removedItems;
+    File photoFile;
+    private static final int PICK_IMAGE = 2;
+    private String m_Text = "";
+    int votesNumber = 0;
+    TextView votes;
     public UploadImage() {
         // Required empty public constructor
     }
@@ -98,7 +89,9 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
     @Override
     public void onResume() {
         super.onResume();
-
+        if(adapter!=null) {
+            adapter.notifyDataSetChanged();
+        }
 
     }
     @Override
@@ -114,55 +107,80 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
         recyclerView = (RecyclerView) fragmentView.findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
 
+
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        b= (Button) fragmentView.findViewById(R.id.UploadButton);
-        b.setOnClickListener(this);
-
-        final ParseQuery<ParseObject> query = ParseQuery.getQuery("BikeOfTheDay");
-
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> links, ParseException e) {
-
-                if (links != null) {
-                    for (int i = 0; i < links.size();i++)
-                    {
-                        listOfUrls.add(links.get(i).get("PictureLink").toString());
-                    }
-
-
-                }
-                Fetch task2 = new Fetch( cloudinary );
-                task2.execute();
-            }
-        });
+//        b= (Button) fragmentView.findViewById(R.id.UploadButton);
+//        b.setOnClickListener(this);
+        FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.fabBike);
+        fab.setOnClickListener(this);
+        getUrls();
         return fragmentView;
     }
 
 
 
-    File photoFile;
 
     @Override
     public void onClick(View v) {
-        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePhotoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            // Create the File where the photo should go
-            photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
+
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+        builder2.setTitle("     Select source");
+
+// Set up the input
+//        final TextView input = new TextView(getActivity());
+//// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+//        input.setText("Would you like to take a picture or upload from storage ?");
+//        builder2.setView(input);
+
+// Set up the buttons
+        builder2.setPositiveButton("Take a picture", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePhotoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    // Create the File where the photo should go
+                    photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException ex) {
+                        // Error occurred while creating the File
+                    }
+                    // Continue only if the File was successfully created
+                    if (photoFile != null) {
+                        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                Uri.fromFile(photoFile));
+                        startActivityForResult(takePhotoIntent, REQUEST_TAKE_PHOTO);
+                    }
+                }
             }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
-                startActivityForResult(takePhotoIntent, REQUEST_TAKE_PHOTO);
+        });
+        builder2.setNegativeButton("Select from storage", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+                    // Error occurred while creating the File
+                }
+                if (photoFile != null) {
+                    Intent intent2 = new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(Intent.createChooser(intent2, "Select Picture"), PICK_IMAGE);
+                }
+
             }
-        }
+        });
+
+        builder2.show();
+
+
+
+
+
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -171,11 +189,112 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
         if (requestCode == REQUEST_TAKE_PHOTO) {
 //            if (resultCode == RESULT_OK) {
                 //File to upload to cloudinary
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("The bike");
 
-                Upload task = new Upload( cloudinary );
-                task.execute();
+// Set up the input
+            final EditText input = new EditText(getActivity());
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            builder.setView(input);
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_Text = input.getText().toString();
+                    Upload task = new Upload(cloudinary );
+                    task.execute();
+
+                    Fetch task3 = new Fetch( cloudinary );
+                    task3.execute();
+
+
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+
+
+        } else if (requestCode == PICK_IMAGE) {
+            final Uri uri = data.getData();
+            try {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 4;
+
+                AssetFileDescriptor fileDescriptor =null;
+                fileDescriptor =
+                       getActivity().getContentResolver().openAssetFileDescriptor( uri, "r");
+//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+
+                Bitmap actuallyUsableBitmap
+                        = BitmapFactory.decodeFileDescriptor(
+                        fileDescriptor.getFileDescriptor(), null, options);
+
+//Convert bitmap to byte array
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                actuallyUsableBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+//                if(bitmap.getByteCount() < 10000000) {
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bos);
+//                }
+//                else if (bitmap.getByteCount() < 15000000)
+//                {
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 25, bos);
+//                }
+//                else
+//                {
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+//                }
+                byte[] bitmapdata = bos.toByteArray();
+
+//write the bytes in file
+                FileOutputStream fos = new FileOutputStream(photoFile);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("The bike");
+
+// Set up the input
+            final EditText input = new EditText(getActivity());
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            builder.setView(input);
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_Text = input.getText().toString();
+                    Upload task = new Upload(cloudinary );
+                    task.execute();
+
+                    Fetch task3 = new Fetch( cloudinary );
+                    task3.execute();
+
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
 
         }
+
     }
 
     private class Upload extends AsyncTask<String, Void, String> {
@@ -194,6 +313,7 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
                 res = mCloudinary.uploader().upload(photoFile.getAbsolutePath(), ObjectUtils.emptyMap());
                 ParseObject BikeIdUpload = new ParseObject("BikeOfTheDay");
                 BikeIdUpload.put("PictureLink", res.get("url"));
+                BikeIdUpload.put("Description",m_Text);
                 try {
                     BikeIdUpload.save();
                 } catch (ParseException e) {
@@ -208,8 +328,13 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getActivity(), "Uploaded"+ res.toString(), Toast.LENGTH_LONG).show();
+
             Log.v("UPLOAD", res.toString());
+            listOfPhotos.clear();
+            adapter.notifyDataSetChanged();
+
+
+
         }
     }
     private class Fetch extends AsyncTask<String, Void, String> {
@@ -226,7 +351,7 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
 
 
 
-            for (int i = 0 ; i < listOfUrls.size() ; i++)
+            for (int i = 0 ; i <= listOfUrls.size() ; i++)
             {
 //                listOfPhotos.add(cloudinary.url().type("fetch").format("jpg").imageTag(listOfUrls.get(i).toString()));
                 try {
@@ -246,28 +371,17 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getActivity(), "Uploaded"+ res.toString(), Toast.LENGTH_LONG).show();
 
 
-//            viewReuestsAdapter adapter = new viewReuestsAdapter(getActivity(),
-//                    R.layout.listview_bike_of_the_day_item_row, listOfPhotos);
-
-
-//            listViewPics = (ListView) getView().findViewById(R.id.listViewPics);
-//
-//
-//
-//            listViewPics.setAdapter(adapter);
-
-            String[] nameArray = {"Cupcake", "Donut"};
-            String[] versionArray = {"1.5", "1.6"};
-            int [] id_ = {1,2};
+//            String[] nameArray = {"Cupcake", "Donut","lolo"};
+//            String[] versionArray = {"1.5", "1.6","3.2"};
+//            int [] id_ = {1,2,2};
             data = new ArrayList<DataModel>();
             for (int i = 0; i < listOfPhotos.size(); i++) {
                 data.add(new DataModel(
-                        nameArray[i],
-                        versionArray[i],
-                        id_[i],
+                        listOfDescriptions.get(i),
+//                        versionArray[i],
+//                        id_[i],
                         listOfPhotos.get(i)
                 ));
             }
@@ -291,6 +405,27 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
 
 
         return image;
+    }
+    public void getUrls()
+    {
+        final ParseQuery<ParseObject> query = ParseQuery.getQuery("BikeOfTheDay");
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> links, ParseException e) {
+
+                if (links != null) {
+                    for (int i = 0; i < links.size();i++)
+                    {
+                        listOfUrls.add(links.get(i).get("PictureLink").toString());
+                        listOfDescriptions.add(links.get(i).get("Description").toString());
+                    }
+
+
+                }
+                Fetch task2 = new Fetch( cloudinary );
+                task2.execute();
+            }
+        });
     }
 }
 
