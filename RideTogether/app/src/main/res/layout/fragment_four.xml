@@ -20,10 +20,11 @@
             android:layout_gravity="right" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txtStartCity2"
             android:gravity="center"
+
 
             android:layout_centerInParent="true"
 
@@ -33,9 +34,9 @@
 
         <TextView
                 android:id="@+id/txtEndCity"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-            android:gravity="center"
+                android:gravity="center"
 
             android:layout_centerInParent="true"
                 />

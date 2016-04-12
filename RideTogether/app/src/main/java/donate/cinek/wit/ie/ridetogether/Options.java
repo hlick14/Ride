@@ -17,6 +17,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,7 +43,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class Options extends BaseActivity {
+public class Options extends AppCompatActivity {
 
     protected ImageButton account;
     private DrawerLayout mDrawerLayout;
@@ -222,7 +223,9 @@ private void setupTabIcons() {
                 startActivity(addFriendIntent);
                 return true;
             case R.id.events:
+                final Intent events = new Intent(getApplicationContext(), Event.class);
 
+                startActivity(events);
                 return true;
             case R.id.BikeOfTheDay:
                 final Intent BikeOfTheDayIntent = new Intent(getApplicationContext(), BikeOfTheDay.class);

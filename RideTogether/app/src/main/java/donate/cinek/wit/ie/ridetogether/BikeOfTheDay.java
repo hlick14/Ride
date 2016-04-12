@@ -265,7 +265,6 @@ public class BikeOfTheDay extends AppCompatActivity  {
                             if (e == null) {
                                 bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
-                                // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
                                 //use this bitmap as you want
                             } else {
                                 Toast.makeText(BikeOfTheDay.this, "Error Loading Data From Our Servers - Image Problem", Toast.LENGTH_SHORT).show();

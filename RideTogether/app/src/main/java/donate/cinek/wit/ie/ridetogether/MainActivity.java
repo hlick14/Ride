@@ -18,15 +18,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
-
-
-
-
-
-
         reg = (Button)findViewById(R.id.fRegister);
         log = (Button)findViewById(R.id.fLogin);
         reg.setOnClickListener(new View.OnClickListener() {
@@ -34,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent reg = new Intent(MainActivity.this,Register.class);
                 startActivity(reg);
-//                Toast.makeText(MainActivity.this, "It works", Toast.LENGTH_LONG).show();
             }
 
         });
@@ -43,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent log = new Intent(MainActivity.this,LoginIn.class);
                 startActivity(log);
-//                Toast.makeText(MainActivity.this,"Login Works too",Toast.LENGTH_LONG).show();
             }
         });
 

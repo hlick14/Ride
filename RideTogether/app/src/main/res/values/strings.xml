@@ -108,6 +108,7 @@
     <string name="title_activity_add_friend">addFriend</string>
     <string name="title_activity_google_places_autocomplete">GooglePlacesAutocompleteActivity
     </string>
+    <string name="title_activity_event">Event</string>
 
 
 </resources>

@@ -177,7 +177,6 @@ public class ListUsersActivity extends AppCompatActivity {
 //                                            if (e == null) {
 //                                                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 //                                                images.add(bitmap);
-//                                                // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
 //                                                //use this bitmap as you want
 //                                            } else {
 //                                                Toast.makeText(ListUsersActivity.this, "Zdjecie jest puste" + e.getMessage().toString(), Toast.LENGTH_LONG).show();

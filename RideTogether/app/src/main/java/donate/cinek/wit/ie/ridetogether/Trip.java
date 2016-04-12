@@ -10,6 +10,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import java.util.List;
 
-public class Trip extends BaseActivity {
+public class Trip extends AppCompatActivity {
     protected TextView StartCity;
     protected TextView DestinationCity, distanceTV, durationTV;
     protected Button TripDate;

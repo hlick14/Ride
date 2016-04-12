@@ -1,10 +1,12 @@
 package donate.cinek.wit.ie.ridetogether;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,57 +30,89 @@ import java.util.List;
  */
 public class ThreeFragment extends android.support.v4.app.Fragment {
 
+    private ListView listView1;
+    public List<SoloTrip> hujumuniu = new ArrayList<>();
+    SoloTrip oneTrip;
+    public List<ParseObject> tempObjectHolder = new ArrayList<>();
+    Bitmap bitmap;
+    String tName, tDate, tTime;
+    private List<Bitmap> imgList = new ArrayList<Bitmap>();
+    int t = 0;
+    View fragmentView;
+    ProgressDialog dialog;
+
     public ThreeFragment() {
         // Required empty public constructor
     }
-    private ListView listView;
 
-    public List<SoloTrip> GroupHujumuniu = new ArrayList<>();
-    SoloTrip oneTrip;
-
-    Bitmap bitmap;
-
-    private List <Bitmap> imgList = new ArrayList<Bitmap>();
-    String imgTripId;
-    int t = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        GroupHujumuniu.clear();
-
-
-
-
 
 
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        setTripAdapter();
 
+    }
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        GroupHujumuniu.clear();
 
-        findTrip();
+        findUser();
 
-        return inflater.inflate(R.layout.fragment_three, container, false);
+        fragmentView = inflater.inflate(R.layout.fragment_one, container, false);
+        FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent plan = new Intent(getActivity(), GooglePlacesAutocompleteActivity.class);
+//                Intent plan = new Intent(getActivity(), MapsActivity.class);
+                startActivity(plan);
+            }
+        });
+
+
+
+        return fragmentView;
     }
-    public void findTrip()
-    {
-        final ParseQuery<ParseObject> tripQuery= ParseQuery.getQuery("TripImage");
+    public void findUser() {
+        if (hujumuniu.isEmpty()) {
+            dialog = new ProgressDialog(this.getActivity(), 1);
+            dialog.setMessage("Retrieving Your Trips List");
+            dialog.setCancelable(false);
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.show();
+        }
+
+
+
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        final ParseQuery<ParseObject> tripQuery = ParseQuery.getQuery("TripImage");
+        tripQuery.whereEqualTo("CreatedbyUser", currentUser); //TO
         tripQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(final List<ParseObject> parseObjects, ParseException e) {
+                if (parseObjects.isEmpty()) {
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                }
                 if (e == null) {
-
-
                     for (int i = 0; i < parseObjects.size(); i++) {
 
+
                         ParseObject objects = parseObjects.get(i);
-                        imgTripId = (String) objects.get("TripID");
-
                         ParseFile file = (ParseFile) objects.get("ImageFile");
-
                         file.getDataInBackground(new GetDataCallback() {
                             public void done(byte[] data, ParseException e) {
                                 if (e == null) {
@@ -85,94 +120,123 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
 
                                     imgList.add(bitmap);
                                     t++;
-                                    if (t == (parseObjects.size() - 1)) {
+                                    if (t == (parseObjects.size())) {
 
-//                                        getTrips();
-                                        t=0;
+                                        getTrips();
+                                    } else {
+                                        if (dialog.isShowing()) {
+                                            dialog.dismiss();
+                                        }
+
                                     }
-
                                 } else {
-                                    Toast.makeText(getActivity(), "Could not load image", Toast.LENGTH_SHORT).show();
+                                    // something went wrong
+                                    Toast.makeText(getActivity(), "Error Loading Trip's images", Toast.LENGTH_SHORT).show();
+
                                 }
                             }
                         });
 
+
                     }
 
+
                 } else {
+                    //if there was a parse error
+                    Toast.makeText(getActivity(), "There was not data about this profile on our servers ", Toast.LENGTH_SHORT).show();
+
 
                 }
             }
 
         });
     }
-    public void getTrips()
-    {
 
+    public void getTrips() {
+        ParseUser currentUser = ParseUser.getCurrentUser();
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("Trip");
+        query.whereEqualTo("CreatedbyUser", currentUser);
         query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> trips, ParseException e) {
+            public void done(List<ParseObject> StartingCity, ParseException e) {
+
                 if (e == null) {
-                    if (trips == null || trips.size() == 0) {
-                        //Toast.makeText(AllTripDisplayer.this, "Ooops, Something went wrong please try again", Toast.LENGTH_SHORT).show();
+                    if (StartingCity.isEmpty()) {
+                        if (dialog.isShowing())
+                            dialog.dismiss();
+
                         return; //no objects
                     }
 
-                    for (int i = 0; i < trips.size(); i++) {
+                    for (int i = 0; i < StartingCity.size(); i++) {
 
-                        ParseObject object = trips.get(i);
+                        ParseObject object = StartingCity.get(i);
+                        tempObjectHolder.add(object);
 
-                        String id = (String) object.getObjectId();
-                        String tName = (String) object.get("TripName");
-                        String tDate = (String) object.get("TripDate");
-                        String tTime = (String) object.get("TripTime");
+                        String id = object.getObjectId();
+                        tName = (String) object.get("TripName");
+                        tDate = (String) object.get("TripDate");
+                        tTime = (String) object.get("TripTime");
                         String tStartCity = (String) object.get("StartCity");
                         String tEndCity = (String) object.get("EndCity");
+                        hujumuniu.add(new SoloTrip(id, imgList.get(i), tName, tStartCity, tEndCity, tDate, tTime));
 
-                        GroupHujumuniu.add(new SoloTrip(id,imgList.get(i), tName, tStartCity, tEndCity, tDate, tTime));
 
                     }
                     // !!!! Adapter initialized at this point due to asynchronous method type . find in background!!!!!!!!!///////////
-                    SoloTripAdapter adapter = new SoloTripAdapter(getActivity(),
-                            R.layout.listviewgroup, GroupHujumuniu);
-
-                    listView = (ListView)getView().findViewById(R.id.listView2);
-
-                    listView.setAdapter(adapter);
-
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            oneTrip = (SoloTrip) parent.getAdapter().getItem(position);
-
-                            Intent intent = new Intent(getActivity().getApplicationContext(), TripInfo.class);
-                            intent.putExtra("icon", oneTrip.getIcon());
-                            intent.putExtra("startcity", oneTrip.getStartCity());
-                            intent.putExtra("endcity", oneTrip.getEndCity());
-                            intent.putExtra("date", oneTrip.getTripDate());
-                            intent.putExtra("time", oneTrip.getTripTime());
-                            intent.putExtra("name", oneTrip.getTitle());
-                            intent.putExtra("check", 1);
-                            startActivity(intent);
-                        }
-                    });
-
+                    setTripAdapter();
+                } else {
+                    if (dialog.isShowing())
+                        dialog.dismiss();
 
                 }
+                if (StartingCity.isEmpty()) {
 
-                else {
-                    Toast.makeText(getActivity(), "There was a problem fetching trip data from our servers", Toast.LENGTH_SHORT).show();
 
+                    Bitmap icon = BitmapFactory.decodeResource(getActivity().getResources(),
+                            R.drawable.notrip);
+                    Toast.makeText(getActivity(), "This is getting exectured or not ?", Toast.LENGTH_SHORT).show();
+                    hujumuniu.add(new SoloTrip("0", icon, "No available Trips", "Unavailable", "Unavailable", "Unavailable", "Unavailable"));
+                    if (dialog.isShowing())
+                        dialog.dismiss();
                 }
 
-                if (GroupHujumuniu.isEmpty())
-                {
-                    // Toast.makeText(AllTripDisplayer.this, "You don't have any trips at the moment", Toast.LENGTH_SHORT).show();
-                }
 
             }
 
 
+        });
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    public void setTripAdapter()
+    {
+
+
+        SoloTripAdapter adapter = new SoloTripAdapter(getActivity(),
+                R.layout.listview_item_row, hujumuniu);
+
+
+        listView1 = (ListView) getView().findViewById(R.id.listView1);
+
+
+        listView1.setAdapter(adapter);
+
+        /////temp disbaled to test async method
+        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                oneTrip = (SoloTrip) parent.getAdapter().getItem(position);
+
+                Intent intent = new Intent(getActivity().getApplicationContext(), popup.class);
+                intent.putExtra("ID", oneTrip.getId());
+                intent.putExtra("Name", tName);
+                intent.putExtra("Date", tDate);
+                intent.putExtra("Time", tTime);
+
+                startActivity(intent);
+            }
         });
     }
 }

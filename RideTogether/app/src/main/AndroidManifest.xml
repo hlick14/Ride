@@ -17,7 +17,9 @@
     <permission
         android:name="donate.cinek.wit.ie.ridetogether.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-    <uses-feature android:name="android.hardware.camera"
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
 
     <uses-permission android:name="donate.cinek.wit.ie.ridetogether.permission.MAPS_RECEIVE" />
@@ -72,12 +74,11 @@
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/largelogo"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:hardwareAccelerated="false"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
@@ -94,8 +95,8 @@
             android:name=".LoginIn"
             android:label="Sign In" />
         <activity
-        android:name=".Trip"
-        android:label="Trip" />
+            android:name=".Trip"
+            android:label="Trip" />
         <activity
             android:name=".BikeOfTheDay"
             android:label="BikeOfTheDay" />
@@ -132,7 +133,6 @@
                 <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -179,10 +179,14 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".addFriend"
-            android:label="@string/title_activity_add_friend"></activity>
+            android:label="@string/title_activity_add_friend" />
         <activity
             android:name=".GooglePlacesAutocompleteActivity"
             android:label="@string/title_activity_google_places_autocomplete"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".Event"
+            android:label="@string/title_activity_event"
             android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
     </application>
 

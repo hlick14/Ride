@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
     private ArrayList<DataModel> dataSet;
-    int votes = 0;
-    TextView textViewVotes;
+
+
     Context context;
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -63,19 +63,19 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
         ImageView imageView = holder.imageViewIcon;
         ImageView im = holder.im;
-          textViewVotes = holder.votes;
+        TextView votes = holder.votes;
 
 
         textViewName.setText(dataSet.get(listPosition).getName());
-        textViewVotes.setText(String.valueOf(0));
+        votes.setText(String.valueOf(dataSet.get(listPosition).getVotes()));
 
 
-        imageView.setImageDrawable(dataSet.get(listPosition).getImage());
+        imageView.setImageBitmap(dataSet.get(listPosition).getImage());
         holder.im.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                votes = votes +1;
-                textViewVotes.setText(String.valueOf(votes));
+//                votes = votes +1;
+//                textViewVotes.setText(String.valueOf(votes));
                 Toast.makeText(context, "VotesUp", Toast.LENGTH_SHORT).show();
             }
         });

@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
@@ -30,6 +31,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -53,7 +56,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
     Location location;
     protected String addressToSend ="";
     protected String addressToSend2="";
-    MarkerOptions options;
+    MarkerOptions options, options2;
     Bitmap bmOverlay;
     RelativeLayout  mapLayout;
 
@@ -62,7 +65,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
     String duration = "";
 
     Context context;
-    ArrayList<LatLng> markerPoints = new ArrayList<LatLng>();
+
 
     public static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
     public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
@@ -72,6 +75,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
     LatLng loc,orginLoc,destLoc ;
     boolean orginOrDest;
     double olat,olong,dlat,dlong;
+    ArrayList<Marker> markers = new ArrayList<>();
 
 
 
@@ -100,11 +104,12 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
             Log.d("RideTogether", "MapsActivity2 Extras are empty");
 
         }
-
-        setRoute(orginLoc);
-        setRoute(destLoc);
         mapLayout = (RelativeLayout) this.findViewById(R.id.mainLayout);
         context = this.getApplicationContext();
+        setRoute(orginLoc,destLoc);
+
+
+
         LocationManager lm = null;
         double latitude = 0.0;
         double longitude = 0.0;
@@ -188,19 +193,31 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
 //            mMap.getUiSettings().setZoomControlsEnabled(true);
             //mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             mMap.getUiSettings().setRotateGesturesEnabled(true);
-
+            final LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker marker : markers) {
+                builder.include(marker.getPosition());
+            }
+            LatLngBounds bounds = builder.build();
+            int padding = 0; // offset from edges of the map in pixels
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(
                     new LatLng(olat, olong)).zoom(12).build();
 
 
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+//            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),padding));
+            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 15));
+                }
+            });
 
             initilizeMap();
 
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 public void onCameraChange(CameraPosition arg0) {
-                    mMap.clear();
-//                    mMap.addMarker(new MarkerOptions().position(arg0.target));
+//                    mMap.clear();
                     loc = arg0.target;
                 }
             });
@@ -255,53 +272,57 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
         }
     }
 
- public void setRoute(LatLng point)
+ public void setRoute(LatLng orgin,LatLng destin)
  {
-     Log.d("arg0", point.latitude + "-" + point.longitude);
+     Log.d("Orgin", orgin.latitude + "-" + orgin.longitude);
+     Log.d("Destination", destin.latitude + "-" + destin.longitude);
 
 
      // adding marker
-     if (markerPoints.size() > 1) {
-         markerPoints.clear();
-         mMap.clear();
+//     if (markerPoints.size() > 1) {
+//         markerPoints.clear();
+//         mMap.clear();
+//
+//     }
 
-     }
-     markerPoints.add(point);
 
 
      options = new MarkerOptions();
 
      // Setting the position of the marker
-     options.position(point);
+     options.position(orginLoc);
+     options.title("Starting Here");
+     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+     mMap.setPadding(0, 160, 0, 0);
+
+     markers.add(mMap.addMarker(options));
      mMap.addMarker(options);
+
 
      /**
       * For the start location, the color of marker is GREEN and
       * for the end location, the color of marker is RED.
       */
+////////////////////////////////////////////////////////////////////////////////////
+     new ReverseGeocodingTask(getBaseContext()).execute(orginLoc);
+     new ReverseGeocodingTask2(getBaseContext()).execute(destLoc);
 
-     new ReverseGeocodingTask(getBaseContext()).execute(point);
-
-
+     options2 = new MarkerOptions();
      // Add new marker to the Google Map Android API V2
-     //mMap.addMarker(options);
-     if (markerPoints.size() >= 2) {
-         origin = markerPoints.get(0);
-         dest = markerPoints.get(1);
-
-         // Getting URL to the Google Directions API
-         String url = getDirectionsUrl(origin, dest);
-
-         DownloadTask downloadTask = new DownloadTask();
-
+     options2.position(destLoc);
+     options.title("Your Trip Ends Here");
+     options2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+     mMap.setPadding(0, 160, 0, 60);
+     markers.add(mMap.addMarker(options2));
+     mMap.addMarker(options2);
+     // Getting URL to the Google Directions API
+     String url = getDirectionsUrl(orginLoc, destLoc);
+     DownloadTask downloadTask = new DownloadTask();
          // Start downloading json data from Google Directions API
-         downloadTask.execute(url);
-     }
+     downloadTask.execute(url);
+
 
  }
-
-
-
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
@@ -503,10 +524,10 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
                         Intent UserTrips = new Intent(MapsActivity2.this, TripInfo.class);
                         UserTrips.putExtra("mapDetails", addressToSend);
                         UserTrips.putExtra("mapDetails2", addressToSend2);
-                        UserTrips.putExtra("originLat", origin.latitude);
-                        UserTrips.putExtra("originLong", origin.longitude);
-                        UserTrips.putExtra("destLat", dest.latitude);
-                        UserTrips.putExtra("destLong", dest.longitude);
+                        UserTrips.putExtra("originLat", orginLoc.latitude);
+                        UserTrips.putExtra("originLong", orginLoc.longitude);
+                        UserTrips.putExtra("destLat", destLoc.latitude);
+                        UserTrips.putExtra("destLong", destLoc.longitude);
                         UserTrips.putExtra("distance", distance);
                         UserTrips.putExtra("duration", duration);
                         startActivity(UserTrips);
@@ -549,20 +570,14 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
                 Address address = addresses.get(0);
 
 
-
                 addressText = String.format("%s, %s, %s",
                         address.getMaxAddressLineIndex() > 0 ? address.getAddressLine(0) : "",
                         address.getLocality(),
                         address.getCountryName());
 
-                if (markerPoints.size() == 1) {
 
-                    addressToSend = address.getAddressLine(1);
-                }
-                if (markerPoints.size() == 2)
-                {
-                    addressToSend2 = address.getAddressLine(1);
-                }
+                addressToSend = address.getAddressLine(1);
+                Log.d("ADDRESS", addressToSend.toString());
 
             }
             return addressText;
@@ -574,71 +589,107 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
             // This will be displayed on taping the marker
 
 
-            if (markerPoints.size() == 1) {
-                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-
-                mMap.setPadding(0, 160, 0, 0);
-
-            } else if (markerPoints.size() == 2) {
-                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//                tvDistanceDuration1.setText("End: " + addressText);
-                mMap.setPadding(0, 160, 0, 60);
-
-
+//            if (markerPoints.size() == 1) {
+//                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+//
+//                mMap.setPadding(0, 160, 0, 0);
+//
+//            } else if (markerPoints.size() == 2) {
+//                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+////                tvDistanceDuration1.setText("End: " + addressText);
+//                mMap.setPadding(0, 160, 0, 60);
 
 
+        }
+    }
 
+        // Placing a marker on the touched position
+        private class ReverseGeocodingTask2 extends AsyncTask<LatLng, Void, String> {
+            Context mContext;
+
+            public ReverseGeocodingTask2(Context context) {
+                super();
+                mContext = context;
+            }
+
+            // Finding address using reverse geocoding
+            @Override
+            protected String doInBackground(LatLng... params) {
+                Geocoder geocoder = new Geocoder(mContext);
+                double latitude = params[0].latitude;
+                double longitude = params[0].longitude;
+
+                List<Address> addresses = null;
+                String addressText = "";
+
+                try {
+                    addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (addresses != null && addresses.size() > 0) {
+                    Address address = addresses.get(0);
+
+
+                    addressText = String.format("%s, %s, %s",
+                            address.getMaxAddressLineIndex() > 0 ? address.getAddressLine(0) : "",
+                            address.getLocality(),
+                            address.getCountryName());
+
+
+                    addressToSend2 = address.getAddressLine(1);
+                    Log.d("ADDRESS", addressToSend2.toString());
+
+
+                }
+                return addressText;
+            }
+
+            @Override
+            protected void onPostExecute(final String addressText) {
 
 
             }
-            // Placing a marker on the touched position
-
-
 
 
         }
 
-    }
 
+            public void captureScreen() {
 
-    public void captureScreen()
-    {
+                SnapshotReadyCallback callback = new SnapshotReadyCallback() {
 
-        SnapshotReadyCallback callback = new SnapshotReadyCallback()
-        {
+                    @Override
+                    public void onSnapshotReady(Bitmap snapshot) {
+                        // TODO Auto-generated method stub
+                        bmOverlay = snapshot;
+                        String fileName = "myImage";
+                        /////////////Bundle can only store data up to 1 mb therefore map screenshot has to be scaled down and comrpessed
+                        ///////////////////////////////Current 275,200
+                        try {
+                            snypImageScaled = Bitmap.createScaledBitmap(bmOverlay, 640, 480
+                                    * bmOverlay.getHeight() / bmOverlay.getWidth(), false);
+                            // Convert it to byte
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            // Compress image to lower quality scale 1 - 100
+                            snypImageScaled.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                            FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
+                            fo.write(bos.toByteArray());
+                            // remember close file output
+                            fo.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
 
-            @Override
-            public void onSnapshotReady(Bitmap snapshot)
-            {
-                // TODO Auto-generated method stub
-                bmOverlay = snapshot;
-                String fileName = "myImage";
-                /////////////Bundle can only store data up to 1 mb therefore map screenshot has to be scaled down and comrpessed
-                ///////////////////////////////Current 275,200
-                try {
-                    snypImageScaled = Bitmap.createScaledBitmap(bmOverlay, 640, 480
-                            * bmOverlay.getHeight() / bmOverlay.getWidth(), false);
-                    // Convert it to byte
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    // Compress image to lower quality scale 1 - 100
-                    snypImageScaled.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                    FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
-                    fo.write(bos.toByteArray());
-                    // remember close file output
-                    fo.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                        }
 
-                }
+                    }
+                };
 
+                mMap.snapshot(callback);
             }
-        };
-
-        mMap.snapshot(callback);
-    }
 
 
+        }
 
-
-
-}

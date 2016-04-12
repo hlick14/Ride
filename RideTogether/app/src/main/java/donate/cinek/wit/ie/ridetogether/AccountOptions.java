@@ -199,16 +199,12 @@ public class AccountOptions extends AppCompatActivity {
                             if (e == null) {
                                 bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
-                                // Toast.makeText(BaseActivity.this, "" + bitmap.getHeight() , Toast.LENGTH_SHORT).show();
-                                //use this bitmap as you want
                             } else {
-                                // something went wrong
                             }
                         }
                     });
 
                 } else {
-                    // Toast.makeText(BaseActivity.this, "objekt jest pusty" , Toast.LENGTH_SHORT).show();
 
                 }
             }

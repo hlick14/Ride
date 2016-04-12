@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<navigationModel
+  ns = "http://schemas.android.com?import=com.android.tools.idea.editors.navigation.model.*">
+  <locations  
+    class = "java.util.ArrayList">
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.BikeOfTheDay"/>
+      <point      
+        x = "248"      
+        y = "372"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.Event"/>
+      <point      
+        x = "550"      
+        y = "150"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.MainActivity"/>
+      <point      
+        x = "600"      
+        y = "200"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.MessagingActivity"/>
+      <point      
+        x = "1756"      
+        y = "-612"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.GooglePlacesAutocompleteActivity"/>
+      <point      
+        x = "700"      
+        y = "300"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.Trip"/>
+      <point      
+        x = "750"      
+        y = "350"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.SoloTripDipsplayer"/>
+      <point      
+        x = "800"      
+        y = "400"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.TripInfo"/>
+      <point      
+        x = "850"      
+        y = "450"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.ListUsersActivity"/>
+      <point      
+        x = "2296"      
+        y = "120"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.MapsActivity"/>
+      <point      
+        x = "1300"      
+        y = "328"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.MapsActivity2"/>
+      <point      
+        x = "968"      
+        y = "712"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.Options"/>
+      <point      
+        x = "972"      
+        y = "1212"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.Register"/>
+      <point      
+        x = "2204"      
+        y = "360"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.AllTripDisplayer"/>
+      <point      
+        x = "1772"      
+        y = "1412"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.popup"/>
+      <point      
+        x = "68"      
+        y = "1824"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.AccountOptions"/>
+      <point      
+        x = "1004"      
+        y = "892"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.BaseActivity"/>
+      <point      
+        x = "2536"      
+        y = "168"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.addFriend"/>
+      <point      
+        x = "1350"      
+        y = "950"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "donate.cinek.wit.ie.ridetogether.LoginIn"/>
+      <point      
+        x = "1400"      
+        y = "1000"/>
+    </statePointEntry>
+  </locations>
+</navigationModel>
