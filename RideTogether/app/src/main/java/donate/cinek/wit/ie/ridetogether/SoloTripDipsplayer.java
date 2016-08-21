@@ -141,7 +141,7 @@ public class SoloTripDipsplayer extends AppCompatActivity {
 
                             ParseObject object = StartingCity.get(i);
 
-                            String id = (String) object.getObjectId();
+                            String id = object.getObjectId();
                             String tName = (String) object.get("TripName");
                             String tDate = (String) object.get("TripDate");
                             String tTime = (String) object.get("TripTime");

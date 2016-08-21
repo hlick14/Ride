@@ -6,6 +6,7 @@ package donate.cinek.wit.ie.ridetogether;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
     private ArrayList<DataModel> dataSet;
+    public int val;
 
 
     Context context;
@@ -27,7 +29,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
 
         ImageView imageViewIcon;
-        ImageView im;
+        ImageView im,im2;
         TextView votes;
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -35,6 +37,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             this.imageViewIcon = (ImageView) itemView.findViewById(R.id.imageView);
             this.im = (ImageView) itemView.findViewById(R.id.imageView3);
             this.votes = (TextView) itemView.findViewById(R.id.textViewRating);
+            this.im2 = (ImageView) itemView.findViewById(R.id.imageView4);
 
 
         }
@@ -63,11 +66,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
         ImageView imageView = holder.imageViewIcon;
         ImageView im = holder.im;
-        TextView votes = holder.votes;
+        ImageView im2 = holder.im2;
+        final TextView votes = holder.votes;
+
 
 
         textViewName.setText(dataSet.get(listPosition).getName());
         votes.setText(String.valueOf(dataSet.get(listPosition).getVotes()));
+
 
 
         imageView.setImageBitmap(dataSet.get(listPosition).getImage());
@@ -76,7 +82,32 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             public void onClick(View v) {
 //                votes = votes +1;
 //                textViewVotes.setText(String.valueOf(votes));
-                Toast.makeText(context, "VotesUp", Toast.LENGTH_SHORT).show();
+                val = dataSet.get(listPosition).getVotes();
+                val = val+1;
+                val = dataSet.get(listPosition).setVotes(val);
+                votes.setText(String.valueOf(val));
+
+                Log.v("RideCustomAdapter", String.valueOf(val));
+                val=0;
+
+
+            }
+        });
+        holder.im2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                val = dataSet.get(listPosition).getVotes();
+                if (val > 0)
+                {
+                    val = val-1;
+                    val = dataSet.get(listPosition).setVotes(val);
+                    votes.setText(String.valueOf(val));
+
+
+                }
+                else if (val ==0){
+                    Toast.makeText(context, "Can't go below zero !", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -85,4 +116,5 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
     public int getItemCount() {
         return dataSet.size();
     }
+
 }

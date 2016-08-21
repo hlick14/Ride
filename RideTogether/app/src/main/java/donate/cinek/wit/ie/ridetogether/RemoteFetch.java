@@ -12,7 +12,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
+///Tutorial followed to implement this code. Available at : http://code.tutsplus.com/tutorials/create-a-weather-app-on-android--cms-21587
 public class RemoteFetch {
 
     private static final String OPEN_WEATHER_MAP_API =

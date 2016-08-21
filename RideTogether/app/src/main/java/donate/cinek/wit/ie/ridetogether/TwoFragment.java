@@ -52,6 +52,8 @@ import java.util.Locale;
 /**
  * Created by Kuba Pieczonka on 05/11/2015.
  */
+///Tutorial followed to implement this code. Available at : http://code.tutsplus.com/tutorials/create-a-weather-app-on-android--cms-21587
+
 public class TwoFragment extends android.support.v4.app.Fragment implements LocationListener {
 
 
@@ -151,7 +153,7 @@ public class TwoFragment extends android.support.v4.app.Fragment implements Loca
                     lm.requestLocationUpdates(
                             LocationManager.GPS_PROVIDER,
                             MIN_TIME_BW_UPDATES,
-                            MIN_DISTANCE_CHANGE_FOR_UPDATES, (android.location.LocationListener) this);
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                     Log.d("GPS", "GPS Enabled");
                     if (lm != null) {
                         location = lm

@@ -6,11 +6,11 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +18,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -191,7 +192,7 @@ public class EventFragment extends android.support.v4.app.Fragment implements Vi
 //            if (resultCode == RESULT_OK) {
             //File to upload to cloudinary
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("The bike");
+            builder.setTitle("The event");
 
 // Set up the input
             final EditText input = new EditText(getActivity());
@@ -325,9 +326,22 @@ public class EventFragment extends android.support.v4.app.Fragment implements Vi
         @Override
         protected void onPostExecute(String result) {
 
-            getUrls();
-            listOfPhotos.clear();
-            adapter.notifyDataSetChanged();
+
+
+//            data.clear();
+//            listOfPhotos.clear();
+//            listOfDescriptions.clear();
+            Log.v("Ride-Upload", result);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    getUrls();
+                    Fetch task3 = new Fetch(cloudinary);
+                    task3.execute();
+                }
+            }, 3000);
 
 
 
@@ -351,8 +365,7 @@ public class EventFragment extends android.support.v4.app.Fragment implements Vi
             {
                 try {
                     InputStream is = (InputStream) new URL(listOfUrls.get(i)).getContent();
-                    Drawable d = Drawable.createFromStream(is, "src name");
-//                    listOfPhotos.add(i,d);
+                    listOfPhotos.add(i,decodeSampledBitmapFromResourceMemOpt(is,200,200));
                 } catch (Exception e) {
 
                 }
@@ -364,26 +377,80 @@ public class EventFragment extends android.support.v4.app.Fragment implements Vi
             return response;
         }
 
+
         @Override
         protected void onPostExecute(String result) {
             int temp = 0;
 
+
             data = new ArrayList<DataModel>();
-            for (int i = 0; i < listOfPhotos.size(); i++) {
+            for (int i = 0; i <  listOfUrls.size(); i++) {
                 data.add(new DataModel(
                         listOfDescriptions.get(i),
                         listOfPhotos.get(i),
                         temp
                 ));
             }
+
             adapter = new CustomAdpaterEvents(data);
             recyclerView.setAdapter(adapter);
             if(progdialog.isShowing())
             {
                 progdialog.dismiss();
             }
+
         }
     }
+    /////////////////////////////////////////// Image decodeing suggested by Binh Tran available at: http://stackoverflow.com/questions/15254272/bitmapfactory-decodestream-out-of-memory-despite-using-reduced-sample-size
+    public Bitmap decodeSampledBitmapFromResourceMemOpt(
+            InputStream inputStream, int reqWidth, int reqHeight) {
+
+        byte[] byteArr = new byte[0];
+        byte[] buffer = new byte[1024];
+        int len;
+        int count = 0;
+
+        try {
+            while ((len = inputStream.read(buffer)) > -1) {
+                if (len != 0) {
+                    if (count + len > byteArr.length) {
+                        byte[] newbuf = new byte[(count + len) * 2];
+                        System.arraycopy(byteArr, 0, newbuf, 0, count);
+                        byteArr = newbuf;
+                    }
+
+                    System.arraycopy(buffer, 0, byteArr, count, len);
+                    count += len;
+                }
+            }
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(byteArr, 0, count, options);
+
+            options.inSampleSize = calculateInSampleSize(options, reqWidth,
+                    reqHeight);
+            options.inPurgeable = true;
+            options.inInputShareable = true;
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+            int[] pids = { android.os.Process.myPid() };
+
+
+            return BitmapFactory.decodeByteArray(byteArr, 0, count, options);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+
+
+
+    //Image file creation uproach suggested by Mohtashim availble at http://stackoverflow.com/questions/33624522/image-upload-to-cloudinary-from-android-camera
+
 
     private File createImageFile() throws IOException {
 
@@ -402,7 +469,14 @@ public class EventFragment extends android.support.v4.app.Fragment implements Vi
     }
     public void getUrls()
     {
+        if (listOfUrls!=null)
+        {
+            listOfUrls.clear();
+            listOfDescriptions.clear();
+
+        }
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        query.orderByDescending("votes");
 
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> links, ParseException e) {
@@ -412,6 +486,8 @@ public class EventFragment extends android.support.v4.app.Fragment implements Vi
                     {
                         listOfUrls.add(links.get(i).get("PictureLink").toString());
                         listOfDescriptions.add(links.get(i).get("Description").toString());
+//                        votes.add((Integer) links.get(i).get("votes"));
+
                     }
 
 
@@ -421,6 +497,31 @@ public class EventFragment extends android.support.v4.app.Fragment implements Vi
             }
         });
     }
+
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+
+
+        return inSampleSize;
+    }
+    //////////////////////////////////////////////////////////////////
+
 }
 
 

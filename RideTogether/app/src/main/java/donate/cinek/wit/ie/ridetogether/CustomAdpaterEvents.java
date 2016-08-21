@@ -25,14 +25,12 @@ public class CustomAdpaterEvents extends RecyclerView.Adapter<CustomAdpaterEvent
 
 
         ImageView imageViewIcon;
-        ImageView im;
-        TextView votes;
+
         public MyViewHolder2(View itemView) {
             super(itemView);
             this.textViewName = (TextView) itemView.findViewById(R.id.textViewName);
             this.imageViewIcon = (ImageView) itemView.findViewById(R.id.imageView);
-//            this.im = (ImageView) itemView.findViewById(R.id.imageView3);
-//            this.votes = (TextView) itemView.findViewById(R.id.textViewRating);
+
 
 
         }
@@ -57,25 +55,10 @@ public class CustomAdpaterEvents extends RecyclerView.Adapter<CustomAdpaterEvent
     @Override
     public void onBindViewHolder(MyViewHolder2 holder, int listPosition) {
         TextView textViewName = holder.textViewName;
-
-        ImageView imageView = holder.imageViewIcon;
-//        ImageView im = holder.im;
-//        textViewVotes = holder.votes;
-
-
         textViewName.setText(dataSet.get(listPosition).getName());
-//        textViewVotes.setText(String.valueOf(0));
-
-
+        ImageView imageView = holder.imageViewIcon;
         imageView.setImageBitmap(dataSet.get(listPosition).getImage());
-//        holder.im.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                votes = votes +1;
-////                textViewVotes.setText(String.valueOf(votes));
-////                Toast.makeText(context, "VotesUp", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+
     }
 
 

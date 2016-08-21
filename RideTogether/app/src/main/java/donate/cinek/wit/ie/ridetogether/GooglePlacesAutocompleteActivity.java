@@ -80,6 +80,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
     private GoogleApiClient mGoogleApiClient;
     ArrayList<Double> list ;
     int positionHolder;
+    String tripType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,10 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
         autocompleteView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.autocomplete_list_item));
         autocompleteView2.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.autocomplete_list_item));
         btn = (Button) findViewById(R.id.Finish);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            tripType=(String)extras.get("TripType");
+            }
         getUserData();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -134,6 +139,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                 startMaps2.putExtra("finalOrginLong", finalOriginLong);
                 startMaps2.putExtra("finalDestLat", finalDestLat);
                 startMaps2.putExtra("finalDestLong", finalDestLong);
+                startMaps2.putExtra("TripType",tripType);
                 startActivity(startMaps2);
             }
         });
@@ -440,7 +446,7 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                 startActivity(maps);
 
 
-                startActivity(maps);
+
 
             }
         });
@@ -491,9 +497,9 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                 return true;
             case R.id.chat:
                 final Intent intent = new Intent(getApplicationContext(), ListUsersActivity.class);
-                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+//                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
                 startActivity(intent);
-                startService(serviceIntent);
+//                startService(serviceIntent);
                 return true;
         }
 
@@ -606,8 +612,8 @@ public class GooglePlacesAutocompleteActivity extends AppCompatActivity implemen
                                 finalOriginLat = list.get(1);
                                 finalOriginLong = list.get(0);
                             } else if (list.size() > 2) {
-//                            finalDestLat = list.get(2);
-//                            finalDestLong = list.get(3);
+                            finalDestLat = list.get(3);
+                            finalDestLong = list.get(2);
                             }
 
                         }

@@ -76,7 +76,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
     boolean orginOrDest;
     double olat,olong,dlat,dlong;
     ArrayList<Marker> markers = new ArrayList<>();
-
+    String tripType;
 
 
 
@@ -84,6 +84,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        Log.d("GET HERE", "Yes!");
         setContentView(R.layout.activity_maps2);
         setUpMapIfNeeded();
         try {
@@ -97,6 +98,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
                 dlat = (double) extras.get("finalDestLat");
                 dlong = (double) extras.get("finalDestLong");
                 destLoc = new LatLng(dlat,dlong);
+                tripType=(String)extras.get("TripType");
             }
         }
         catch (Exception e)
@@ -173,7 +175,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
                 lm.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER,
                         MIN_TIME_BW_UPDATES,
-                        MIN_DISTANCE_CHANGE_FOR_UPDATES, (android.location.LocationListener) this);
+                        MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                 Log.d("GPS", "GPS Enabled");
                 if (lm != null) {
                     location = lm
@@ -202,19 +204,21 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(
                     new LatLng(olat, olong)).zoom(12).build();
+//            captureScreen();
 
 
 
 //            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),padding));
+
+
+            initilizeMap();
             mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                 @Override
                 public void onMapLoaded() {
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 15));
+
                 }
             });
-
-            initilizeMap();
-
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 public void onCameraChange(CameraPosition arg0) {
 //                    mMap.clear();
@@ -237,7 +241,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
         if (mMap == null) {
             mMap = ((MapFragment) getFragmentManager().findFragmentById(
                     R.id.map)).getMap();
-            View mapView = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getView();
+            View mapView = getFragmentManager().findFragmentById(R.id.map).getView();
             View btnMyLocation = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(80,80); // size of button in dp
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
@@ -310,7 +314,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
      options2 = new MarkerOptions();
      // Add new marker to the Google Map Android API V2
      options2.position(destLoc);
-     options.title("Your Trip Ends Here");
+     options2.title("Your Trip Ends Here");
      options2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
      mMap.setPadding(0, 160, 0, 60);
      markers.add(mMap.addMarker(options2));
@@ -523,6 +527,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
 
                         Intent UserTrips = new Intent(MapsActivity2.this, TripInfo.class);
                         UserTrips.putExtra("mapDetails", addressToSend);
+                        UserTrips.putExtra("TripType",tripType);
                         UserTrips.putExtra("mapDetails2", addressToSend2);
                         UserTrips.putExtra("originLat", orginLoc.latitude);
                         UserTrips.putExtra("originLong", orginLoc.longitude);
@@ -536,7 +541,7 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
                 }).show();
             }
 
-            captureScreen();
+
         }
     }
 

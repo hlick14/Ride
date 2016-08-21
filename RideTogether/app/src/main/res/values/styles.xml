@@ -38,6 +38,9 @@
 
 
     </style>
+    <style name="Color1SwitchStyle">
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
 
     <style name="AppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -72,6 +75,14 @@
     <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AlertDialogCustom" parent="@android:style/Theme.Dialog">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:topDark">@color/colorPrimaryDark</item>
+        <item name="android:textSize">15sp</item>
 
+
+
+    </style>
 
 </resources>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="donate.cinek.wit.ie.ridetogether.popup">
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update"
+        android:id="@+id/eConfirm2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join"
+        android:id="@+id/eJoin2"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:id="@+id/eDelete2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/UpdateNameWrapper" />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/UpdateNameWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:theme="@style/AppTheme.Base">
+
+        <EditText
+            android:id="@+id/tName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"/>
+    </android.support.design.widget.TextInputLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Trip Date"
+        android:id="@+id/tDate"
+        android:layout_below="@+id/UpdateNameWrapper"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Trip time"
+        android:id="@+id/tTime"
+        android:layout_below="@+id/tDate"
+
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Joined by"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/tTime"
+
+        android:layout_centerHorizontal="true" />
+
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/popUpListView"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textView2"
+        android:layout_above="@+id/eDelete2"
+        android:layout_marginBottom="10dp"/>
+
+
+
+</RelativeLayout>

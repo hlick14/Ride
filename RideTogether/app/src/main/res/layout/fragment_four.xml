@@ -23,6 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txtStartCity2"
+            android:layout_gravity="center_horizontal"
             android:gravity="center"
 
 
@@ -36,6 +37,7 @@
                 android:id="@+id/txtEndCity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:gravity="center"
 
             android:layout_centerInParent="true"

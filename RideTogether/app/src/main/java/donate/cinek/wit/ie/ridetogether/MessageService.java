@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.parse.ParseUser;
 import com.sinch.android.rtc.ClientRegistration;
@@ -19,6 +20,8 @@ import com.sinch.android.rtc.messaging.WritableMessage;
 /**
  * Created by Kuba Pieczonka on 22/01/2016.
  */
+// Tutorial followed to implement this code avaialble at : https://github.com/sinch/android-messaging-tutorial
+
 public class MessageService extends Service implements SinchClientListener {
 
     private static final String APP_KEY = "b8b7331d-b1b2-4033-a976-bf3c48a2bfdd";
@@ -33,11 +36,13 @@ public class MessageService extends Service implements SinchClientListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        currentUserId = ParseUser.getCurrentUser().getUsername();
-
+        Log.v("rehan","on start command");
+        broadcaster = LocalBroadcastManager.getInstance(this);
+        currentUserId = ParseUser.getCurrentUser().getObjectId();
         if (currentUserId != null && !isSinchClientStarted()) {
+
             startSinchClient(currentUserId);
+            broadcaster = LocalBroadcastManager.getInstance(this);
         }
 
         broadcaster = LocalBroadcastManager.getInstance(this);
@@ -45,8 +50,9 @@ public class MessageService extends Service implements SinchClientListener {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void startSinchClient(String username) {
 
+    public void startSinchClient(String username) {
+        Log.v("rehan", "on start");
         sinchClient = Sinch.getSinchClientBuilder().context(this).userId(username).applicationKey(APP_KEY)
                 .applicationSecret(APP_SECRET).environmentHost(ENVIRONMENT).build();
 
@@ -54,8 +60,8 @@ public class MessageService extends Service implements SinchClientListener {
 
         sinchClient.setSupportMessaging(true);
         sinchClient.setSupportActiveConnectionInBackground(true);
+
         sinchClient.checkManifest();
-        sinchClient.startListeningOnActiveConnection();
         sinchClient.start();
     }
 
@@ -78,6 +84,9 @@ public class MessageService extends Service implements SinchClientListener {
 
         client.startListeningOnActiveConnection();
         messageClient = client.getMessageClient();
+
+        Log.v("rehan", "on yeeees");
+
     }
 
     @Override

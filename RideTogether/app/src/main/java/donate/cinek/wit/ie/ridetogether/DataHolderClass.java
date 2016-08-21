@@ -15,7 +15,7 @@ public class DataHolderClass {
             dataObject = new DataHolderClass();
         return dataObject;
     }
-    private String distributor_id;;
+    private String distributor_id;
 
     public String getDistributor_id() {
         return distributor_id;

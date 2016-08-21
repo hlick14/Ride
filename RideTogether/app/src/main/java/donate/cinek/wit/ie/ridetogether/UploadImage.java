@@ -4,10 +4,12 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -25,20 +27,18 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,8 +71,10 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
     private String m_Text = "";
     ImageLoader imageLoader;
 
-            ProgressDialog progdialog;
+    ProgressDialog progdialog;
     int viewWidth;
+    protected Bitmap snypImageScaled;
+    protected byte[] scaledData;
     public UploadImage() {
         // Required empty public constructor
     }
@@ -85,7 +87,7 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
         config.put("api_key", "948126291598285");
         config.put("api_secret", "a-Hh58yVNi6bXfeBrArVhZ1HD6I");
         cloudinary = new Cloudinary(config);
-         imageLoader = ImageLoader.getInstance();
+        imageLoader = ImageLoader.getInstance();
         imageLoader.init(ImageLoaderConfiguration.createDefault(getActivity()));
 
 
@@ -99,6 +101,30 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
             adapter.notifyDataSetChanged();
         }
 
+    }
+    @Override
+    public void onStop(){
+        super.onStop();
+//        Toast.makeText(getActivity(), "This is happening on activity exit ", Toast.LENGTH_SHORT).show();
+//        name = update.getEditText().getText().toString().trim();
+//
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Trip");
+//
+//        query.getInBackground(sId, new GetCallback<ParseObject>() {
+//
+//
+//            public void done(ParseObject cos, com.parse.ParseException e) {
+//                if (e == null) {
+//
+//                    cos.put("TripName", name);
+//
+//                    cos.saveInBackground();
+//
+//                } else {
+//                    Log.d("score", "Error: " + e.getMessage());
+//                }
+//            }
+//        });
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
@@ -120,6 +146,8 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
+
+
         FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.fabBike);
         fab.setOnClickListener(this);
         getUrls();
@@ -133,8 +161,8 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
     @Override
     public void onClick(View v) {
 
-        AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
-        builder2.setTitle("     Select source");
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity(),R.style.AlertDialogCustom);
+        builder2.setTitle("Select source");
         builder2.setPositiveButton("Take a picture", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -189,7 +217,7 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
 
         if (requestCode == REQUEST_TAKE_PHOTO) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogCustom);
             builder.setTitle("The bike");
 
             final EditText input = new EditText(getActivity());
@@ -225,61 +253,34 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
         } else if (requestCode == PICK_IMAGE) {
             final Uri uri = data.getData();
 
-            Log.v("Show me ", uri.toString());
-            imageLoader.loadImage(uri.toString(), new SimpleImageLoadingListener() {
-                @Override
-                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    // Do whatever you want with Bitmap
-                    Bitmap bmp = imageLoader.loadImageSync(uri.toString());
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            Bitmap bitmap;
+            try {
+                bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(uri));
+                snypImageScaled = Bitmap.createScaledBitmap(bitmap, 200, 200
+                        * bitmap.getHeight() / bitmap.getWidth(), false);
+                // Convert it to byte
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                // Compress image to lower quality scale 1 - 100
+                snypImageScaled.compress(Bitmap.CompressFormat.JPEG, 100, bos);
 
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 0, bos);
-                    byte[] bitmapdata = bos.toByteArray();
-                    try {
-                        FileOutputStream fos = new FileOutputStream(photoFile);
-                        fos.write(bitmapdata);
-                        fos.flush();
-                        fos.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-//            Bitmap bmp = imageLoader.loadImageSync(uri.toString());
-//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                scaledData = bos.toByteArray();
+                FileOutputStream fos = new FileOutputStream(photoFile);
+                fos.write(scaledData);
+                fos.flush();
+                fos.close();
+                snypImageScaled.recycle();
+
+
+//                photoFile.setImageBitmap(snypImageScaled);
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
 //
-//            bmp.compress(Bitmap.CompressFormat.JPEG, 0, bos);
-//                byte[] bitmapdata = bos.toByteArray();
-//            try {
-//                FileOutputStream fos = new FileOutputStream(photoFile);
-//                fos.write(bitmapdata);
-//                fos.flush();
-//                fos.close();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//                BitmapFactory.Options options = new BitmapFactory.Options();
-//                options.inSampleSize = 4;
-//                AssetFileDescriptor fileDescriptor =null;
-//                fileDescriptor =
-//                       getActivity().getContentResolver().openAssetFileDescriptor( uri, "r");
-//                Bitmap actuallyUsableBitmap
-//                        = BitmapFactory.decodeFileDescriptor(
-//                        fileDescriptor.getFileDescriptor(), null, options);
-//                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//                actuallyUsableBitmap.compress(Bitmap.CompressFormat.JPEG, 0, bos);
-//                byte[] bitmapdata = bos.toByteArray();
-//                FileOutputStream fos = new FileOutputStream(photoFile);
-//                fos.write(bitmapdata);
-//                fos.flush();
-//                fos.close();
-//                if(actuallyUsableBitmap !=null) {
-//                    actuallyUsableBitmap.recycle();
-//                }
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("The bike");
 
@@ -354,9 +355,17 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
 //            listOfPhotos.clear();
 //            listOfDescriptions.clear();
             Log.v("Ride-Upload", result);
-            getUrls();
-            Fetch task3 = new Fetch( cloudinary );
-            task3.execute();
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    getUrls();
+                    Fetch task3 = new Fetch( cloudinary );
+                    task3.execute();
+                }
+            }, 2500);
+
 
         }
     }
@@ -371,75 +380,46 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
-//            if(!listOfPhotos.isEmpty()) {
-//                listOfPhotos.clear();
-//                listOfDescriptions.clear();
-//                getUrls();
-//            }
-             final int BUFFER_IO_SIZE = 8000;
-            BufferedOutputStream out;
-            Bitmap bitmap = null;
-            for (int i = 0 ; i < listOfUrls.size() ; i++)
+
+
+            listOfPhotos.clear();
+
+            for (int i = 0 ; i <= listOfUrls.size() ; i++)
             {
+//                listOfPhotos.add(cloudinary.url().type("fetch").format("jpg").imageTag(listOfUrls.get(i).toString()));
+                try {
+                    InputStream is = (InputStream) new URL(listOfUrls.get(i)).getContent();
 
-//                    BufferedInputStream in;
-//                    InputStream is = (InputStream) new URL(listOfUrls.get(i)).getContent();
-//                    in = new BufferedInputStream(new URL(listOfUrls.get(i))
-//                            .openStream(),
-//                            BUFFER_IO_SIZE);
-//                    final ByteArrayOutputStream dataStream = new
-//                            ByteArrayOutputStream();
-//                    out = new BufferedOutputStream(dataStream, BUFFER_IO_SIZE);
-//                    copy(in, out);
-//                    out.flush();
-//
-//                    final byte[] data = dataStream.toByteArray();
-//                     bitmap = BitmapFactory.decodeByteArray(data, 0,
-//                            data.length);
-//                    Drawable d = Drawable.createFromStream(is, "src name");
-                imageLoader.loadImage(listOfUrls.get(i), new SimpleImageLoadingListener() {
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        // Do whatever you want with Bitmap
-//                            Bitmap bmp = imageLoader.loadImageSync(uri.toString());
-                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//                    BitmapFactory.decodeStream(is1, null, options);
 
-                        loadedImage.compress(Bitmap.CompressFormat.JPEG, 25, bos);
-                        byte[] bitmapdata = bos.toByteArray();
-                        try {
-                            FileOutputStream fos = new FileOutputStream(photoFile);
-                            fos.write(bitmapdata);
-                            fos.flush();
-                            fos.close();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        listOfPhotos.add(loadedImage);
+//                    decodeSampledBitmapFromResourceMemOpt(is,200,200);
 
-                    }
-                });
+                    listOfPhotos.add(i,decodeSampledBitmapFromResourceMemOpt(is,200,200));
+                    Log.d("Upload", " The size of list of Photes is "
+                            + listOfDescriptions.get(i));
+                    Log.d("Upload", " The size of list of URLS is "
+                            + listOfUrls.get(i));
 
 
+                } catch (Exception e) {
 
-//                    Picasso.with(getActivity().getApplicationContext()).load("http://i.imgur.com/DvpvklR.png").into(listOfPhotos.add(i,));
-
+                }
 
             }
-//            out = null;
+
+
+
             return response;
-        }
-        private void copy(final InputStream bis, final OutputStream baos) throws IOException {
-            byte[] buf = new byte[256];
-            int l;
-            while ((l = bis.read(buf)) >= 0) baos.write(buf, 0, l);
         }
 
         @Override
         protected void onPostExecute(String result) {
-            Log.v("Ride-Upload", result);
 
+
+            if(adapter!=null)
+            {
+                adapter.notifyDataSetChanged();
+            }
             data = new ArrayList<DataModel>();
             for (int i = 0; i <  listOfUrls.size(); i++) {
                 data.add(new DataModel(
@@ -458,6 +438,57 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
 
         }
     }
+    /////////////////////////////////////////// Image decodeing suggested by Binh Tran available at: http://stackoverflow.com/questions/15254272/bitmapfactory-decodestream-out-of-memory-despite-using-reduced-sample-size
+
+    public Bitmap decodeSampledBitmapFromResourceMemOpt(
+            InputStream inputStream, int reqWidth, int reqHeight) {
+
+        byte[] byteArr = new byte[0];
+        byte[] buffer = new byte[1024];
+        int len;
+        int count = 0;
+
+        try {
+            while ((len = inputStream.read(buffer)) > -1) {
+                if (len != 0) {
+                    if (count + len > byteArr.length) {
+                        byte[] newbuf = new byte[(count + len) * 2];
+                        System.arraycopy(byteArr, 0, newbuf, 0, count);
+                        byteArr = newbuf;
+                    }
+
+                    System.arraycopy(buffer, 0, byteArr, count, len);
+                    count += len;
+                }
+            }
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(byteArr, 0, count, options);
+
+            options.inSampleSize = calculateInSampleSize(options, reqWidth,
+                    reqHeight);
+            options.inPurgeable = true;
+            options.inInputShareable = true;
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+            int[] pids = { android.os.Process.myPid() };
+
+
+            return BitmapFactory.decodeByteArray(byteArr, 0, count, options);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+
+
+
+    //Image file creation uproach suggested by Mohtashim availble at http://stackoverflow.com/questions/33624522/image-upload-to-cloudinary-from-android-camera
+
 
     private File createImageFile() throws IOException {
 
@@ -476,7 +507,13 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
     }
     public void getUrls()
     {
+        if (listOfUrls!=null)
+        {
+            listOfUrls.clear();
+            listOfDescriptions.clear();
+        }
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("BikeOfTheDay");
+        query.orderByDescending("votes");
 
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> links, ParseException e) {
@@ -499,8 +536,26 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
     }
 
 
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
 
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+
+
+        return inSampleSize;
+    }
 }
-
-
 

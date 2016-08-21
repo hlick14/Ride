@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
+    android:padding="16sp">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        card_view:cardBackgroundColor="@android:color/transparent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cv">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+            <ImageView
+                android:layout_width="100sp"
+                android:layout_height="100sp"
+                android:id="@+id/mapImage"
+                android:src="@drawable/ic_launcher" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Trip Title"
+                android:id="@+id/txtTitle"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/mapImage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Starting City"
+                android:id="@+id/txtStartCity"
+                android:layout_below="@+id/txtTitle"
+                android:layout_toEndOf="@+id/mapImage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="End City"
+                android:id="@+id/txtEndCity"
+                android:layout_below="@+id/txtStartCity"
+                android:layout_toEndOf="@+id/mapImage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Date"
+                android:id="@+id/txtTripDate"
+                android:layout_below="@+id/txtTripTime"
+                android:layout_toEndOf="@+id/mapImage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Time"
+                android:id="@+id/txtTripTime"
+
+                android:layout_below="@+id/txtEndCity"
+                android:layout_toEndOf="@+id/mapImage" />
+
+            <!--<Switch-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Join"-->
+                <!--android:id="@+id/switch1"-->
+                <!--app:theme="@style/Color1SwitchStyle"-->
+                <!--android:layout_below="@+id/txtEndCity"-->
+                <!--android:layout_alignParentEnd="true" />-->
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

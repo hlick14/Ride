@@ -148,7 +148,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 lm.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER,
                         MIN_TIME_BW_UPDATES,
-                        MIN_DISTANCE_CHANGE_FOR_UPDATES, (android.location.LocationListener) this);
+                        MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                 Log.d("GPS", "GPS Enabled");
                 if (lm != null) {
                     location = lm
@@ -242,7 +242,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         if (mMap == null) {
             mMap = ((MapFragment) getFragmentManager().findFragmentById(
                     R.id.map)).getMap();
-            View mapView = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getView();
+            View mapView = getFragmentManager().findFragmentById(R.id.map).getView();
             View btnMyLocation = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(80,80); // size of button in dp
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
@@ -280,50 +280,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
 
 
-//    @Override
-//    public void onMapLongClick(LatLng point) {
 //
-//
-//        Log.d("arg0", point.latitude + "-" + point.longitude);
-//
-//
-//        // adding marker
-//        if (markerPoints.size() > 1) {
-//            markerPoints.clear();
-//            mMap.clear();
-//
-//        }
-//        markerPoints.add(point);
-//
-//        options = new MarkerOptions();
-//
-//        // Setting the position of the marker
-//        options.position(point);
-//
-//        /**
-//         * For the start location, the color of marker is GREEN and
-//         * for the end location, the color of marker is RED.
-//         */
-//
-//        new ReverseGeocodingTask(getBaseContext()).execute(point);
-//
-//
-//        // Add new marker to the Google Map Android API V2
-//        //mMap.addMarker(options);
-//        if (markerPoints.size() >= 2) {
-//             origin = markerPoints.get(0);
-//             dest = markerPoints.get(1);
-//
-//            // Getting URL to the Google Directions API
-//            String url = getDirectionsUrl(origin, dest);
-//
-//            DownloadTask downloadTask = new DownloadTask();
-//
-//            // Start downloading json data from Google Directions API
-//            downloadTask.execute(url);
-//        }
-//
-//    }
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 

@@ -1,15 +1,15 @@
 package donate.cinek.wit.ie.ridetogether;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.android.gms.maps.model.LatLng;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+// Example by tutorils buzz available at: http://www.tutorialsbuzz.com/2016/02/android-google-map-route-between-two-locations.html
 public class DirectionsJSONParser {
 
     /** Receives a JSONObject and returns a list of lists containing latitude and longitude */
@@ -62,8 +62,8 @@ public class DirectionsJSONParser {
                         /** Traversing all points */
                         for(int l=0;l<list.size();l++){
                             HashMap<String, String> hm = new HashMap<String, String>();
-                            hm.put("lat", Double.toString(((LatLng)list.get(l)).latitude) );
-                            hm.put("lng", Double.toString(((LatLng)list.get(l)).longitude) );
+                            hm.put("lat", Double.toString(list.get(l).latitude) );
+                            hm.put("lng", Double.toString(list.get(l).longitude) );
                             path.add(hm);
                         }
                     }

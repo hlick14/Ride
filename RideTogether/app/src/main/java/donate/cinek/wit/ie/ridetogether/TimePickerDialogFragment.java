@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.widget.TextView;
 import android.widget.TimePicker;
+////////////////Usage of Time picker dialog was implemented by following a tutorial avialble at : http://wptrafficanalyzer.in/blog/displaying-timepickerdialog-using-dialogfragment-in-android-with-backward-compatibilty-support-library/
 
 public class TimePickerDialogFragment extends DialogFragment {
     Handler myHandler ;

@@ -98,6 +98,7 @@ public class Options extends AppCompatActivity {
 
 
 
+
         getUserData();
 
 
@@ -133,6 +134,7 @@ public class Options extends AppCompatActivity {
                     //Turn of the service from sinch
 
                     ParseUser.logOut();
+                    stopService(new Intent(getApplicationContext(), MessageService.class));
                     Intent backToMain = new Intent(Options.this, MainActivity.class);
                     startActivity(backToMain);
                 }
@@ -212,9 +214,13 @@ private void setupTabIcons() {
                 return true;
             case R.id.chat:
                 final Intent intent = new Intent(getApplicationContext(), ListUsersActivity.class);
-                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+
                 startActivity(intent);
-                startService(serviceIntent);
+//                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+//                startService(serviceIntent);
+
+
+
                 return true;
             case R.id.change_city:
 
@@ -253,7 +259,7 @@ private void setupTabIcons() {
     public void onBackPressed() {
         Intent backToMain = new Intent(Options.this, MainActivity.class);
         ParseUser.logOut();
-
+        stopService(new Intent(getApplicationContext(), MessageService.class));
         startActivity(backToMain);
 
     }

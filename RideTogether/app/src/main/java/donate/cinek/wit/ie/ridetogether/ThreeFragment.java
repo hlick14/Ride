@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,16 +31,17 @@ import java.util.List;
  */
 public class ThreeFragment extends android.support.v4.app.Fragment {
 
-    private ListView listView1;
-    public List<SoloTrip> hujumuniu = new ArrayList<>();
+    private ListView listView2;
+    public List<SoloTrip> hujumuniu2 = new ArrayList<>();
     SoloTrip oneTrip;
     public List<ParseObject> tempObjectHolder = new ArrayList<>();
     Bitmap bitmap;
     String tName, tDate, tTime;
-    private List<Bitmap> imgList = new ArrayList<Bitmap>();
+    private List<Bitmap> imgList2 = new ArrayList<Bitmap>();
     int t = 0;
     View fragmentView;
     ProgressDialog dialog;
+    SoloTripAdapter adapter;
 
     public ThreeFragment() {
         // Required empty public constructor
@@ -48,13 +50,14 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        findUser();
 
     }
     @Override
     public void onResume() {
         super.onResume();
         setTripAdapter();
+
 
     }
     @Override
@@ -67,14 +70,31 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        findUser();
+        Bundle b = getActivity().getIntent().getExtras();
+        if(b!=null) {
+            Boolean check = (Boolean) b.get("AddedNewTrip");
+            if(check!=null)
+            {
+                t =0;
+                if(adapter!=null)
+                {
+                    adapter.clear();
+                }
+                findUser();
+//                adapter.notifyDataSetChanged();
 
-        fragmentView = inflater.inflate(R.layout.fragment_one, container, false);
+            }
+        }
+
+
+        fragmentView = inflater.inflate(R.layout.fragment_three, container, false);
+
         FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent plan = new Intent(getActivity(), GooglePlacesAutocompleteActivity.class);
+                plan.putExtra("TripType","g");
 //                Intent plan = new Intent(getActivity(), MapsActivity.class);
                 startActivity(plan);
             }
@@ -85,29 +105,31 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
         return fragmentView;
     }
     public void findUser() {
-        if (hujumuniu.isEmpty()) {
-            dialog = new ProgressDialog(this.getActivity(), 1);
-            dialog.setMessage("Retrieving Your Trips List");
-            dialog.setCancelable(false);
-            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.show();
-        }
+//        if (hujumuniu2.isEmpty()) {
+//            dialog = new ProgressDialog(this.getActivity(), 1);
+//            dialog.setMessage("Retrieving Your Trips List");
+//            dialog.setCancelable(false);
+//            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//            dialog.show();
+//        }
 
 
 
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         final ParseQuery<ParseObject> tripQuery = ParseQuery.getQuery("TripImage");
-        tripQuery.whereEqualTo("CreatedbyUser", currentUser); //TO
+
+        tripQuery.whereEqualTo("TripType","g");
         tripQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(final List<ParseObject> parseObjects, ParseException e) {
                 if (parseObjects.isEmpty()) {
-                    if (dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
+//                    if (dialog.isShowing()) {
+//                        dialog.dismiss();
+//                    }
                 }
                 if (e == null) {
+//                    imgList2 = new ArrayList<Bitmap>();
                     for (int i = 0; i < parseObjects.size(); i++) {
 
 
@@ -118,15 +140,15 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
                                 if (e == null) {
                                     bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
-                                    imgList.add(bitmap);
+                                    imgList2.add(bitmap);
                                     t++;
                                     if (t == (parseObjects.size())) {
 
                                         getTrips();
                                     } else {
-                                        if (dialog.isShowing()) {
-                                            dialog.dismiss();
-                                        }
+//                                        if (dialog.isShowing()) {
+//                                            dialog.dismiss();
+//                                        }
 
                                     }
                                 } else {
@@ -154,22 +176,25 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
 
     public void getTrips() {
         ParseUser currentUser = ParseUser.getCurrentUser();
-        final ParseQuery<ParseObject> query = ParseQuery.getQuery("Trip");
-        query.whereEqualTo("CreatedbyUser", currentUser);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> StartingCity, ParseException e) {
+        final ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Trip");
+
+        query2.whereEqualTo("TripType","g");
+        query2.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> StartingCity2, ParseException e) {
 
                 if (e == null) {
-                    if (StartingCity.isEmpty()) {
-                        if (dialog.isShowing())
-                            dialog.dismiss();
+                    hujumuniu2.clear();
+                    if (StartingCity2.isEmpty()) {
+//                        if (dialog.isShowing())
+//                            dialog.dismiss();
 
                         return; //no objects
                     }
+                    hujumuniu2 = new ArrayList<SoloTrip>();
 
-                    for (int i = 0; i < StartingCity.size(); i++) {
+                    for (int i = 0; i < StartingCity2.size(); i++) {
 
-                        ParseObject object = StartingCity.get(i);
+                        ParseObject object = StartingCity2.get(i);
                         tempObjectHolder.add(object);
 
                         String id = object.getObjectId();
@@ -178,26 +203,27 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
                         tTime = (String) object.get("TripTime");
                         String tStartCity = (String) object.get("StartCity");
                         String tEndCity = (String) object.get("EndCity");
-                        hujumuniu.add(new SoloTrip(id, imgList.get(i), tName, tStartCity, tEndCity, tDate, tTime));
+                        hujumuniu2.add(new SoloTrip(id, imgList2.get(i), tName, tStartCity, tEndCity, tDate, tTime));
 
 
                     }
                     // !!!! Adapter initialized at this point due to asynchronous method type . find in background!!!!!!!!!///////////
                     setTripAdapter();
                 } else {
-                    if (dialog.isShowing())
-                        dialog.dismiss();
+//                    if (dialog.isShowing())
+//                        dialog.dismiss();
 
                 }
-                if (StartingCity.isEmpty()) {
+                if (StartingCity2.isEmpty()) {
 
 
                     Bitmap icon = BitmapFactory.decodeResource(getActivity().getResources(),
                             R.drawable.notrip);
                     Toast.makeText(getActivity(), "This is getting exectured or not ?", Toast.LENGTH_SHORT).show();
-                    hujumuniu.add(new SoloTrip("0", icon, "No available Trips", "Unavailable", "Unavailable", "Unavailable", "Unavailable"));
-                    if (dialog.isShowing())
-                        dialog.dismiss();
+                    hujumuniu2.add(new SoloTrip("0", icon, "No available Trips", "Unavailable", "Unavailable", "Unavailable", "Unavailable"));
+                    setTripAdapter();
+//                    if (dialog.isShowing())
+//                        dialog.dismiss();
                 }
 
 
@@ -205,35 +231,41 @@ public class ThreeFragment extends android.support.v4.app.Fragment {
 
 
         });
-        if (dialog.isShowing()) {
-            dialog.dismiss();
-        }
+//        if (dialog.isShowing()) {
+//            dialog.dismiss();
+//        }
     }
 
     public void setTripAdapter()
     {
 
 
-        SoloTripAdapter adapter = new SoloTripAdapter(getActivity(),
-                R.layout.listview_item_row, hujumuniu);
+         adapter = new SoloTripAdapter(getActivity(),
+                R.layout.listview_item_row2, hujumuniu2);
 
 
-        listView1 = (ListView) getView().findViewById(R.id.listView1);
+        listView2 = (ListView) getView().findViewById(R.id.listView2);
 
 
-        listView1.setAdapter(adapter);
+        listView2.setAdapter(adapter);
+//        if (dialog.isShowing()) {
+//            dialog.dismiss();
+//        }
+        final ParseUser currentUser = ParseUser.getCurrentUser();
 
         /////temp disbaled to test async method
-        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 oneTrip = (SoloTrip) parent.getAdapter().getItem(position);
+                Log.d("ONE TRIP DETAILS", oneTrip.getTitle()+ oneTrip.getId());
 
-                Intent intent = new Intent(getActivity().getApplicationContext(), popup.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), popup2.class);
                 intent.putExtra("ID", oneTrip.getId());
-                intent.putExtra("Name", tName);
-                intent.putExtra("Date", tDate);
-                intent.putExtra("Time", tTime);
+                intent.putExtra("UserId",currentUser.getUsername());
+                intent.putExtra("Name", oneTrip.getTitle());
+                intent.putExtra("Date", oneTrip.getTripDate());
+                intent.putExtra("Time", oneTrip.getTripTime());
 
                 startActivity(intent);
             }

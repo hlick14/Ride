@@ -16,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/linearLayout2">
         <android.support.design.widget.TextInputLayout
             android:id="@+id/tripNameWrapper"
             android:layout_width="match_parent"
@@ -28,6 +29,9 @@
             <EditText
                 android:id="@+id/tripName"
                 android:layout_width="match_parent"
+                android:layout_marginRight="80dp"
+                android:layout_marginLeft="40dp"
+
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 />
@@ -47,6 +51,7 @@
             android:gravity="center"
             android:text="Date of your trip"
             android:layout_width="match_parent"
+
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -60,48 +65,42 @@
     </LinearLayout>
 
 
+    <com.rey.material.widget.Button
+        android:layout_width="150dp"
+        android:background="@drawable/roundedbutton"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:text="@string/Time"
+        android:id="@+id/buttonSelectTime"
 
+        android:layout_marginBottom="107dp"
+        android:layout_above="@+id/fab"
+        android:layout_alignParentStart="true" />
+    <com.rey.material.widget.Button
 
+        android:layout_width="150dp"
+        android:background="@drawable/roundedbutton"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:text="@string/Date"
+        android:id="@+id/buttonSelectDate"
 
-
-
-        <com.rey.material.widget.Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Date"
-            android:id="@+id/buttonSelectDate"
-            android:background="@color/postive_btn"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="64dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true" />
-
-
-        <com.rey.material.widget.Button
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Time"
-            android:id="@+id/buttonSelectTime"
-            android:layout_marginBottom="130sp"
-            android:background="@color/postive_btn"
-            android:layout_alignParentBottom="true"
-            android:layout_alignStart="@+id/buttonSelectDate"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="false" />
+        android:layout_alignTop="@+id/buttonSelectTime"
+        android:layout_alignEnd="@+id/fab" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:theme="@style/Material"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         app:borderWidth="0dp"
         app:elevation="2dp"
+        app:backgroundTint="@color/colorPrimary"
 
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin2"
-        android:src="@drawable/ic_add_white_24dp" />
+        android:src="@drawable/ic_add_white_24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/linearLayout2"
+        android:layout_marginBottom="67dp" />
 
 
 

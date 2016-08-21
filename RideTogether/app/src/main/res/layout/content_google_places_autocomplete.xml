@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Choose point on map"
-            android:paddingTop="50dp"
+            android:paddingTop="10dp"
             android:id="@+id/ChoosePoint"
             android:layout_gravity="center_horizontal" />
 
@@ -96,6 +96,7 @@
             android:layout_marginTop="10dp"
             android:text="Continue"
             android:ems="20"
+            android:background="@drawable/roundedbutton"
             android:id="@+id/Finish"
             android:layout_gravity="center_horizontal" />
 

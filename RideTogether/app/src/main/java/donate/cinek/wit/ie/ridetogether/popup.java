@@ -68,7 +68,7 @@ public class popup extends AppCompatActivity {
                                 cos.saveInBackground();
 
                             } else {
-                                Log.d("score", "Error: " + e.getMessage());
+                                Log.d("RideTogether", "Error: " + e.getMessage());
                             }
                         }
                     });

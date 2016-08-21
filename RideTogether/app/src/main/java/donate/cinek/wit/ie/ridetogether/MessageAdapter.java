@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Created by Kuba Pieczonka on 22/01/2016.
  */
+// Tutorial followed to implement this code avaialble at : https://github.com/sinch/android-messaging-tutorial
 public class MessageAdapter extends BaseAdapter {
     public static final int DIRECTION_INCOMING = 0;
     public static final int DIRECTION_OUTGOING = 1;

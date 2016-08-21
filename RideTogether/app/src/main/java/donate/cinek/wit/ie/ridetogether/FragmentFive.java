@@ -2,6 +2,7 @@ package donate.cinek.wit.ie.ridetogether;
 
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,6 +32,7 @@ import com.parse.ParseUser;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +41,7 @@ import java.util.List;
 /**
  * Created by Kuba Pieczonka on 05/11/2015.
  */
+////////////////Usage of Time picker dialog was implemented by following a tutorial avialble at : http://wptrafficanalyzer.in/blog/displaying-timepickerdialog-using-dialogfragment-in-android-with-backward-compatibilty-support-library/
 public class FragmentFive extends android.support.v4.app.Fragment
        {
 
@@ -67,6 +70,10 @@ public class FragmentFive extends android.support.v4.app.Fragment
            private boolean check1 = true, check2 = true;
            String uSince;
            String Model,Engine;
+           ArrayList<String> usersJoined;
+           Intent options;
+           ProgressDialog dialog;
+
 
 
            String m, m2;
@@ -87,6 +94,7 @@ public class FragmentFive extends android.support.v4.app.Fragment
 
         super.onCreate(savedInstanceState);
         Fragment fragment = new Fragment();
+        usersJoined =  new ArrayList<>();
 
 
     }
@@ -309,7 +317,10 @@ public class FragmentFive extends android.support.v4.app.Fragment
 
                if (check1 && check2) {
 
-                   ParseObject Trip = new ParseObject("Trip");
+                   ParseObject TripParse = new ParseObject("Trip");
+                   Bundle extras = getActivity().getIntent().getExtras();
+                   String start = extras.getString("mapDetails");
+                   String end = extras.getString("mapDetails2");
 //            Trip.put("TripName", tripName);
                    if (start == null) {
                        start = "Unknown";
@@ -317,28 +328,28 @@ public class FragmentFive extends android.support.v4.app.Fragment
                    if (end == null) {
                        end = "Unknown";
                    }
-                   Trip.put("TripName", tName);
-                   Trip.put("StartCity", start);
-                   Trip.put("EndCity", end);
-                   Trip.put("TripDate", toSend);
-                   Trip.put("TripTime", timeToSend);
-//            Trip.put("TripDistance", distance);
-//            Trip.put("TripDuration", duration);
-
-                   if (currentUser != null) {
-                       Trip.put("CreatedbyUser", currentUser);
-                   } else {
-
-                       Intent backToMain = new Intent(getActivity(), Options.class);
-                       startActivity(backToMain);
-                   }
-//            ParseGeoPoint point = new ParseGeoPoint(startLat, startLong);
-//            ParseGeoPoint point2 = new ParseGeoPoint(finishLat, finishLong);
+                   TripParse.put("TripName", tName);
+                   TripParse.put("StartCity", start);
+                   TripParse.put("EndCity", end);
+                   TripParse.put("TripDate", toSend);
+                   TripParse.put("TripTime", timeToSend);
+                   Bundle bundle = this.getArguments();
+                   String temp;
+                   temp=bundle.getString("TripType");
 
 
-//                Trip.saveInBackground();
+                   TripParse.put("TripType",(temp));
+
+
+
+
+                   TripParse.put("CreatedbyUser", currentUser);
+                   usersJoined.add(currentUser.getUsername());
+                   TripParse.add("JoinedUsers", usersJoined);
+                   TripParse.put("JoinedUsers",usersJoined);
+
                    try {
-                       Trip.save();
+                       TripParse.save();
                    } catch (ParseException e) {
                        e.printStackTrace();
                    }
@@ -358,13 +369,9 @@ public class FragmentFive extends android.support.v4.app.Fragment
                    bitmapData = stream.toByteArray();
 
 
-//            ParseObject placeObject = new ParseObject("Geo");
-//            placeObject.put("tripID", Trip.getObjectId());
-//            placeObject.put("locationStart", point);
-//            placeObject.put("locationEnd", point2);
 
 
-                   ParseFile file1 = new ParseFile(Trip.getObjectId() + ".png", bitmapData);
+                   ParseFile file1 = new ParseFile(TripParse.getObjectId() + ".png", bitmapData);
                    file1.saveInBackground();
                    ParseObject imgupload1 = new ParseObject("TripImage");
 
@@ -375,7 +382,8 @@ public class FragmentFive extends android.support.v4.app.Fragment
 
                    imgupload1.put("ImageFile", file1);
 
-                   imgupload1.put("TripID", Trip.getObjectId());
+                   imgupload1.put("TripID", TripParse.getObjectId());
+                   imgupload1.put("TripType",(temp));
 
                    ParseUser currentUser1 = ParseUser.getCurrentUser();
                    if (currentUser != null) {
@@ -385,13 +393,28 @@ public class FragmentFive extends android.support.v4.app.Fragment
                    // Create the class and the columns
                    imgupload1.saveInBackground();
 //            placeObject.saveInBackground();
-                   Intent options = new Intent(getActivity(), Options.class);
-                   startActivity(options);
+                   options = new Intent(getActivity(), Options.class);
+                   options.putExtra("AddedNewTrip", true);
+                   final Handler handler = new Handler();
+                   dialog = new ProgressDialog(this.getActivity(), 1);
+                   dialog.setMessage("Saving Your Trip");
+                   dialog.setCancelable(false);
+                   dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                   dialog.show();
+                   handler.postDelayed(new Runnable() {
+                       @Override
+                       public void run() {
+                           if (dialog.isShowing()) {
+                               dialog.dismiss();
+                           }
+                           startActivity(options);
+                       }
+                   }, 2500);
+
 
 
                }
                else {
-//            Toast.makeText(Trip.this,"Please select date & time of your trip",Toast.LENGTH_LONG).show();
 
                    check1 = true;
                    check2 = true;

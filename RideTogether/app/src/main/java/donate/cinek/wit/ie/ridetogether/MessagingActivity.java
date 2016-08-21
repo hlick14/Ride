@@ -25,6 +25,7 @@ import com.sinch.android.rtc.messaging.WritableMessage;
 
 import java.util.Arrays;
 import java.util.List;
+// Tutorial followed to implement this code avaialble at : https://github.com/sinch/android-messaging-tutorial
 
 public class MessagingActivity extends AppCompatActivity {
 

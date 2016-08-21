@@ -8,34 +8,29 @@ import android.graphics.Bitmap;
 public class DataModel {
 
     String name;
-//    String version;
-//    int id_;
     Bitmap image;
     int votes;
 
-    public DataModel(String name,Bitmap image,int votes) {
+    public DataModel(String name, Bitmap image, int votes) {
         this.name = name;
-//        this.version = version;
-//        this.id_ = id_;
         this.votes = votes;
-        this.image=image;
+        this.image = image;
     }
 
     public String getName() {
         return name;
     }
-//
-//    public String getVersion() {
-//        return version;
-//    }
-public int getVotes() {
-    return votes;
-}
+
+    public int getVotes() {
+        return votes;
+    }
+
+    public int setVotes(int votes) {
+        this.votes= votes ;
+        return votes;
+    }
+
     public Bitmap getImage() {
         return image;
     }
-//
-//    public int getId() {
-//        return id_;
-//    }
 }

@@ -79,7 +79,7 @@ public class AccountOptions extends AppCompatActivity {
         getUserData();
         final ParseUser currentUser = ParseUser.getCurrentUser();
         String cUserName = (String) currentUser.get("Name");
-        final String cUserEmail = (String) currentUser.getEmail();
+        final String cUserEmail = currentUser.getEmail();
 
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(cUserName);

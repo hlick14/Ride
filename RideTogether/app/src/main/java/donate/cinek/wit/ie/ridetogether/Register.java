@@ -59,6 +59,7 @@ public class Register extends AppCompatActivity {
         final TextInputLayout usernameWrapper = (TextInputLayout) findViewById(R.id.RUsernameWrapper);
         final TextInputLayout passwordWrapper = (TextInputLayout) findViewById(R.id.RPasswordWrapper);
         final TextInputLayout motorbikeWrapper = (TextInputLayout) findViewById(R.id.ModelWrapper);
+        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
 
         nameWrapper.setHint("Name");
         emailWrapper.setHint("Email");
@@ -205,8 +206,11 @@ public class Register extends AppCompatActivity {
                     public void done(ParseException e) {
                         if (e == null) {
                             photoUpload();
+
                             Intent newTrip = new Intent(Register.this, Options.class);
+                            startService(serviceIntent);
                             startActivity(newTrip);
+
                         } else {
                             Toast.makeText(Register.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
                         }

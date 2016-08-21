@@ -39,6 +39,10 @@ public class LoginIn extends AppCompatActivity {
 //        getSupportActionBar().hide();
         final TextInputLayout usernameWrapper = (TextInputLayout) findViewById(R.id.usernameWrapper);
         final TextInputLayout passwordWrapper = (TextInputLayout) findViewById(R.id.passwordWrapper);
+        final Intent intent = new Intent(getApplicationContext(), Options.class);
+        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+
+
         usernameWrapper.setHint("Username");
         passwordWrapper.setHint("Password");
 //        final TextView txtView = (TextView) findViewById(R.id.WelcomeText);
@@ -70,72 +74,74 @@ public class LoginIn extends AppCompatActivity {
 
 
 
-                    hideKeyboard();
-                    final String susername = usernameWrapper.getEditText().getText().toString().trim();
-                    final String spassword = passwordWrapper.getEditText().getText().toString().trim();
-                    ParseUser.logInInBackground(susername, spassword, new LogInCallback() {
-                        @Override
-                        public void done(ParseUser user, com.parse.ParseException e) {
-                            if (user != null) {
-                                    //temporarly disabled to check sinch messaging
+                hideKeyboard();
+                final String susername = usernameWrapper.getEditText().getText().toString().trim();
+                final String spassword = passwordWrapper.getEditText().getText().toString().trim();
+                ParseUser.logInInBackground(susername, spassword, new LogInCallback() {
+                    @Override
+                    public void done(ParseUser user, com.parse.ParseException e) {
+                        if (user != null) {
+                            //temporarly disabled to check sinch messaging
 
 
-                                    final String currentUser = ParseUser.getCurrentUser().getUsername();
-                                    ParseQuery<ParseObject> query = ParseQuery.getQuery("FriendRequest");
-                                    query.whereEqualTo("RequestedUser", currentUser);
-                                    query.findInBackground(new FindCallback<ParseObject>() {
-                                        public void done(List<ParseObject> users, ParseException e) {
-                                            if (e == null) {
-                                                numOfReuests = users.size();
-                                                Intent home = new Intent(LoginIn.this, Options.class);
-                                                home.putExtra("requests",numOfReuests);
-                                                if(dialog.isShowing()) {
-                                                    dialog.dismiss();
-                                                }
-                                                startActivity(home);
+                            final String currentUser = ParseUser.getCurrentUser().getUsername();
+                            ParseQuery<ParseObject> query = ParseQuery.getQuery("FriendRequest");
+                            query.whereEqualTo("RequestedUser", currentUser);
+                            query.findInBackground(new FindCallback<ParseObject>() {
+                                public void done(List<ParseObject> users, ParseException e) {
+                                    if (e == null) {
+                                        numOfReuests = users.size();
+                                        Intent home = new Intent(LoginIn.this, Options.class);
+                                        home.putExtra("requests", numOfReuests);
+                                        if(dialog.isShowing()) {
+                                            dialog.dismiss();
+                                        }
+                                        startService(serviceIntent);
+                                        startActivity(home);
+
 //                                final Intent intent = new Intent(getApplicationContext(), ListUsersActivity.class);
-                                                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+//                                        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
 //                                startActivity(intent);
 //                                startService(serviceIntent);
-                                            } else {
-                                                numOfReuests = 0;
-                                                Toast.makeText(LoginIn.this, "There was an error retrieving your friend requests from our servers", Toast.LENGTH_SHORT).show();
-                                            }
+                                    } else {
+                                        numOfReuests = 0;
+                                        Toast.makeText(LoginIn.this, "There was an error retrieving your friend requests from our servers", Toast.LENGTH_SHORT).show();
+                                    }
 
 
-                                        }
-                                    });
-
-
-
-
-
-
-
-                            } else {
-                                usernameWrapper.setErrorEnabled(true);
-//                                usernameWrapper.setError("Invalid Username or Password");
-                                usernameWrapper.setError(Html.fromHtml("<font color='#ffffff'>Invalid Username or Password</font>"));
-                                if(dialog.isShowing()) {
-                                    dialog.dismiss();
                                 }
+                            });
 
 
-                            }
-
-                        }
-                    });
 
 
-//                                    Toast.makeText(LoginIn.this, "Log in Failed, Please Try again", Toast.LENGTH_SHORT).show();
-                        if(spassword.isEmpty())
-                        {
-                            passwordWrapper.setError(Html.fromHtml("<font color='#ffffff'>Please enter the password</font>"));
+
+
+
+                        } else {
+                            usernameWrapper.setErrorEnabled(true);
+//                                usernameWrapper.setError("Invalid Username or Password");
+                            usernameWrapper.setError(Html.fromHtml("<font color='#ffffff'>Invalid Username or Password</font>"));
                             if(dialog.isShowing()) {
                                 dialog.dismiss();
                             }
+
+
                         }
+
                     }
+                });
+
+
+//                                    Toast.makeText(LoginIn.this, "Log in Failed, Please Try again", Toast.LENGTH_SHORT).show();
+                if(spassword.isEmpty())
+                {
+                    passwordWrapper.setError(Html.fromHtml("<font color='#ffffff'>Please enter the password</font>"));
+                    if(dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                }
+            }
 
         });
 

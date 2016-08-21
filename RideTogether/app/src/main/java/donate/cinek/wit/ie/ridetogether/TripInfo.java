@@ -71,8 +71,10 @@ public class TripInfo extends AppCompatActivity {
     Bitmap bitmap ;
     String uSince;
     String Model,Engine;
+    public String tripType;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+
     private TextView tv;
     private android.support.v7.widget.Toolbar toolbar;
     private int[] tabIcons = {
@@ -103,7 +105,14 @@ public class TripInfo extends AppCompatActivity {
 
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        Bundle extras = getIntent().getExtras();
+        if (!extras.isEmpty()) {
 
+            sStart = extras.getString("mapDetails");
+            sEnd = extras.getString("mapDetails2");
+            tripType = extras.getString("TripType");
+
+        }
         setupViewPager(viewPager);
 
 
@@ -139,16 +148,7 @@ public class TripInfo extends AppCompatActivity {
 
 
         ////////////////////////////////////
-        Bundle extras = getIntent().getExtras();
 
-
-        if (extras != null) {
-
-
-            sStart = extras.getString("mapDetails");
-            sEnd = extras.getString("mapDetails2");
-
-        }
     }
 
 
@@ -194,11 +194,17 @@ public class TripInfo extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new FourFragment(), "Four");
-        adapter.addFragment(new FragmentFive(), "Five");
-//        adapter.addFragment(new FragmentSix(), "Four");
+        FragmentFive FragmentFive = new FragmentFive();
+        Bundle b = new Bundle();
+        b.putString("TripType",tripType);
+        FragmentFive.setArguments(b);
+        adapter.addFragment( FragmentFive, "Five");
         viewPager.setAdapter(adapter);
     }
-
+ public String getTripInfo ()
+ {
+     return tripType;
+ }
 class ViewPagerAdapter extends FragmentPagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();

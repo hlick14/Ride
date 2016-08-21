@@ -167,6 +167,9 @@
             android:name=".popup"
             android:theme="@style/AppTheme.popup" />
         <activity
+            android:name=".popup2"
+            android:theme="@style/AppTheme.popup" />
+        <activity
             android:name=".ListUsersActivity"
             android:label="@string/title_activity_list_users"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
