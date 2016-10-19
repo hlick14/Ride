@@ -508,13 +508,14 @@ public class MapsActivity2 extends FragmentActivity implements LocationListener 
                     points.add(position);
                 }
 
-                // Adding all the points in the route to LineOptions
-                lineOptions.width(2);
-                lineOptions.color(Color.RED);
-                lineOptions.visible(true);
-                lineOptions.addAll(points);
+
 
             }
+            // Adding all the points in the route to LineOptions
+            lineOptions.width(2);
+            lineOptions.color(Color.RED);
+            lineOptions.visible(true);
+            lineOptions.addAll(points);
 //            LatLngBounds.Builder builder = new LatLngBounds.Builder();
 //            builder.include(orginLoc);
 //            builder.include(destLoc);

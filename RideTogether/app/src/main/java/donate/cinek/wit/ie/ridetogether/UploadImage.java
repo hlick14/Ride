@@ -179,7 +179,7 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
                     if (photoFile != null) {
                         takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                                 Uri.fromFile(photoFile));
-                        takePhotoIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+                        takePhotoIntent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
                         startActivityForResult(takePhotoIntent, REQUEST_TAKE_PHOTO);
                     }
                 }
@@ -197,7 +197,7 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
                 if (photoFile != null) {
                     Intent intent2 = new Intent(Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent2.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+                    intent2.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
                     startActivityForResult(Intent.createChooser(intent2, "Select Picture"), PICK_IMAGE);
                 }
 
@@ -256,12 +256,12 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
             Bitmap bitmap;
             try {
                 bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(uri));
-                snypImageScaled = Bitmap.createScaledBitmap(bitmap, 200, 200
+                snypImageScaled = Bitmap.createScaledBitmap(bitmap, 1200, 980
                         * bitmap.getHeight() / bitmap.getWidth(), false);
                 // Convert it to byte
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 // Compress image to lower quality scale 1 - 100
-                snypImageScaled.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                snypImageScaled.compress(Bitmap.CompressFormat.PNG, 100, bos);
 
                 scaledData = bos.toByteArray();
                 FileOutputStream fos = new FileOutputStream(photoFile);
@@ -394,11 +394,11 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
 
 //                    decodeSampledBitmapFromResourceMemOpt(is,200,200);
 
-                    listOfPhotos.add(i,decodeSampledBitmapFromResourceMemOpt(is,200,200));
-                    Log.d("Upload", " The size of list of Photes is "
-                            + listOfDescriptions.get(i));
-                    Log.d("Upload", " The size of list of URLS is "
-                            + listOfUrls.get(i));
+                    listOfPhotos.add(i,decodeSampledBitmapFromResourceMemOpt(is,250,300));
+//                    Log.d("Upload", " The size of list of Photes is "
+//                            + listOfDescriptions.get(i));
+//                    Log.d("Upload", " The size of list of URLS is "
+//                            + listOfUrls.get(i));
 
 
                 } catch (Exception e) {
@@ -498,7 +498,7 @@ public class UploadImage extends android.support.v4.app.Fragment implements View
                 Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,
-                ".jpg",
+                ".png",
                 storageDir
         );
 

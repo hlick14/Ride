@@ -43,12 +43,13 @@ public class FourFragment extends android.support.v4.app.Fragment {
         try {
             bitmap = BitmapFactory.decodeStream(getActivity().getApplicationContext()
                     .openFileInput("myImage"));
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 0, bos);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 //        final Bitmap bitmap =intent.getParcelableExtra("screenshot");
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 0, bos);
+
 
 
 

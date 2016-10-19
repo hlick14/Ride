@@ -5,6 +5,8 @@ package donate.cinek.wit.ie.ridetogether;
  */
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -77,6 +79,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
 
         imageView.setImageBitmap(dataSet.get(listPosition).getImage());
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("http://www.google.com")));
+            }
+        });
         holder.im.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

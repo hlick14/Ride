@@ -335,9 +335,11 @@ public class FragmentFive extends android.support.v4.app.Fragment
                    TripParse.put("TripTime", timeToSend);
                    Bundle bundle = this.getArguments();
                    String temp;
+
                    temp=bundle.getString("TripType");
-
-
+                   //temp to show!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    temp="s";
+                   Log.d("HERE", "saveTrips: "+ temp);
                    TripParse.put("TripType",(temp));
 
 
@@ -364,8 +366,8 @@ public class FragmentFive extends android.support.v4.app.Fragment
 
 
                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                   Log.v("Bitmap in method:", "" + bitmap.getByteCount());
-                   bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                   Log.v("Bitmap in method:", "" + bitmap.getByteCount());
+//                   bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                    bitmapData = stream.toByteArray();
 
 

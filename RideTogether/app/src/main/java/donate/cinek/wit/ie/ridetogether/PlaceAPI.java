@@ -81,6 +81,8 @@ public class PlaceAPI {
             Log.e("AutoComplete",resultList.toString());
             ar.add(resultList);
 
+
+
         } catch (JSONException e) {
             Log.e(TAG, "Cannot process JSON results", e);
         }
